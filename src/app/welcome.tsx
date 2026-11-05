@@ -1,264 +1,380 @@
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  useColorScheme,
+  Dimensions,
+} from 'react-native';
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
+import Svg, { Path } from 'react-native-svg';
 
+const { width } = Dimensions.get('window');
+
+// Dark & Light theme palettes matching Durga Puja aesthetics
+const THEMES = {
+  dark: {
+    bg: '#171325',
+    card: '#201A30',
+    cardBorder: '#2C2442',
+    textPrimary: '#FFFFFF',
+    textMuted: '#9B90B2',
+    accent: '#FF7A5C', // Vibrant festival coral
+    accentBg: '#352538',
+    track: '#2C2540',
+    langContainer: '#231C34',
+    langInactive: '#A89FBD',
+    allowBtnBg: '#35273C',
+    allowBtnText: '#FFB2A1',
+    continueBtn: '#FF7A5C',
+    continueBtnText: '#FFFFFF',
+    pinBg: '#321F32',
+    pinColor: '#FF7A5C',
+  },
+  light: {
+    bg: '#FBF7F0',
+    card: '#FFFFFF',
+    cardBorder: '#EFE8DF',
+    textPrimary: '#2A1F1A',
+    textMuted: '#7D6F67',
+    accent: '#C8341F',
+    accentBg: '#FCEAE6',
+    track: '#EDE5DB',
+    langContainer: '#EFE8DF',
+    langInactive: '#7D6F67',
+    allowBtnBg: '#FCEAE6',
+    allowBtnText: '#C8341F',
+    continueBtn: '#C8341F',
+    continueBtnText: '#FFFFFF',
+    pinBg: '#FCEAE6',
+    pinColor: '#C8341F',
+  },
+};
+
+type Language = 'en' | 'bn' | 'hi';
 
 export default function WelcomeScreen() {
-    const [language, setLanguage] = useState<'en' | 'bn' | 'hi'>('en');
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const colors = isDark ? THEMES.dark : THEMES.light;
 
-    const [locationGranted, setLocationGranted] = useState(false);
+  const [language, setLanguage] = useState<Language>('en');
+  const [locationGranted, setLocationGranted] = useState(false);
 
-    const [progress] = useState(50);
-    const [downloaded] = useState(80);
-    const [total] = useState(148);
-    async function handleAllowLocation() {
+ 
+  const [progress] = useState(62);
+  const [downloaded] = useState(92);
+  const [total] = useState(148);
 
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
-            setLocationGranted(true);
-        }
+  async function handleAllowLocation() {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        setLocationGranted(true);
+      }
+    } catch {
+      setLocationGranted(true);
     }
+  }
 
-    function handleContinue() {
-        router.replace('/(tabs)');
-    }
+  function handleContinue() {
+    router.replace('/(tabs)');
+  }
 
+  const languages = [
+    { code: 'en' as const, label: 'EN' },
+    { code: 'bn' as const, label: 'বাং' },
+    { code: 'hi' as const, label: 'हिं' },
+  ];
 
-    const languages = [
-        { code: 'en', label: 'EN' },
-        { code: 'bn', label: 'বাং' },
-        { code: 'hi', label: 'हिं' },
-    ] as const;
-
-    return (
-        <View style={styles.screen}>
-
-            <View style={styles.langRow}>
-                {languages.map((lang) => (
-                    <Pressable
-                        key={lang.code}
-                        style={[
-                            styles.langChip,
-                            language === lang.code && styles.langChipActive,
-                        ]}
-                        onPress={() => setLanguage(lang.code)}
-                    >
-                        <Text
-                            style={[
-                                styles.langChipText,
-                                language === lang.code && styles.langChipTextActive,
-                            ]}
-                        >
-                            {lang.label}
-                        </Text>
-                    </Pressable>
-                ))}
-            </View>
-
-            <View style={styles.heroSection}>
-                <View style={styles.iconBox}>
-                    <Text style={styles.iconEmoji}>📍</Text>
-                </View>
-                <Text style={styles.appName}>Kolkata{'\n'}Pandal Hopping</Text>
-                <Text style={styles.tagline}>Plan your Durga Puja route. Works offline.</Text>
-            </View>
-
-
-            <View style={styles.card}>
-                <View style={styles.cardRow}>
-                    <Text style={styles.cardTitle}>Downloading Kolkata map</Text>
-                    <Text style={styles.progressPercent}>{progress}%</Text>
-                </View>
-
-                <View style={styles.progressTrack}>
-                    <View style={[styles.progressFill, { width: `${progress}%` }]} />
-                </View>
-
-                <View style={styles.cardRow}>
-                    <Text style={styles.cardSub}>{downloaded} of {total} MB</Text>
-                    <Text style={styles.cardSub}>Wi-Fi recommended</Text>
-                </View>
-            </View>
-
-            <View style={styles.card}>
-                <View style={styles.locationRow}>
-                    <View style={styles.locationIconBox}>
-                        <Text>📍</Text>
-                    </View>
-                    <View style={styles.locationTextBox}>
-                        <Text style={styles.cardTitle}>Show pujas near you</Text>
-                        <Text style={styles.cardSub}>Location is used only on your phone</Text>
-                    </View>
-                    {!locationGranted ? (
-                        <TouchableOpacity style={styles.allowBtn} onPress={handleAllowLocation}>
-                            <Text style={styles.allowBtnText}>Allow</Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <Text style={styles.grantedText}>✓ On</Text>
-                    )}
-                </View>
-            </View>
-
-            <View style={{ flex: 1 }} />
-
-            <TouchableOpacity style={styles.continueBtn} onPress={handleContinue}>
-                <Text style={styles.continueBtnText}>Continue</Text>
-            </TouchableOpacity>
-
+  return (
+    <View style={[styles.screen, { backgroundColor: colors.bg }]}>
+      {/* Top Bar with Language Selector */}
+      <View style={styles.topBar}>
+        <View style={[styles.langContainer, { backgroundColor: colors.langContainer }]}>
+          {languages.map((item) => {
+            const active = language === item.code;
+            return (
+              <TouchableOpacity
+                key={item.code}
+                activeOpacity={0.8}
+                onPress={() => setLanguage(item.code)}
+                style={[
+                  styles.langPill,
+                  active && { backgroundColor: colors.accent },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    { color: active ? '#FFFFFF' : colors.langInactive },
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-    );
+      </View>
+
+      {/* Hero Section */}
+      <View style={styles.heroSection}>
+           <View style={styles.logoClipper}>
+          <Image
+            source={require('../../assets/images/pandel_hopper_logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+        <Text style={[styles.appName, { color: colors.textPrimary }]}>
+          Pandal Hopper
+        </Text>
+        <Text style={[styles.tagline, { color: colors.textMuted }]}>
+          Plan your Durga Puja route. Works offline.
+        </Text>
+      </View>
+
+      {/* Card 1: Offline Map Download Progress */}
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: colors.card, borderColor: colors.cardBorder },
+        ]}
+      >
+        <View style={styles.cardHeader}>
+          <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>
+            Downloading Kolkata map
+          </Text>
+          <Text style={[styles.percentText, { color: colors.accent }]}>
+            {progress}%
+          </Text>
+        </View>
+
+        <View style={[styles.progressTrack, { backgroundColor: colors.track }]}>
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${progress}%`, backgroundColor: colors.accent },
+            ]}
+          />
+        </View>
+
+        <View style={styles.cardFooter}>
+          <Text style={[styles.subText, { color: colors.textMuted }]}>
+            {downloaded} of {total} MB
+          </Text>
+          <Text style={[styles.subText, { color: colors.textMuted }]}>
+            Wi-Fi recommended
+          </Text>
+        </View>
+      </View>
+
+      {/* Card 2: Location Permission */}
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: colors.card, borderColor: colors.cardBorder },
+        ]}
+      >
+        <View style={styles.locationRow}>
+          {/* Location Pin Icon */}
+          <View style={[styles.pinCircle, { backgroundColor: colors.pinBg }]}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                fill={colors.pinColor}
+              />
+            </Svg>
+          </View>
+
+          {/* Location Description */}
+          <View style={styles.locationInfo}>
+            <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>
+              Show pujas near you
+            </Text>
+            <Text style={[styles.locationSub, { color: colors.textMuted }]}>
+              Location is used only on your phone
+            </Text>
+          </View>
+
+          {/* Action Button */}
+          {!locationGranted ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleAllowLocation}
+              style={[styles.allowBtn, { backgroundColor: colors.allowBtnBg }]}
+            >
+              <Text style={[styles.allowBtnText, { color: colors.allowBtnText }]}>
+                Allow
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.allowBtn, { backgroundColor: '#1C3829' }]}>
+              <Text style={[styles.allowBtnText, { color: '#4ADE80' }]}>
+                ✓ On
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      <View style={{ flex: 1 }} />
+
+      {/* Primary Continue Button */}
+      <TouchableOpacity
+        activeOpacity={0.88}
+        onPress={handleContinue}
+        style={[styles.continueBtn, { backgroundColor: colors.continueBtn }]}
+      >
+        <Text style={[styles.continueBtnText, { color: colors.continueBtnText }]}>
+          Continue
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
+
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: '#FAF8F5',  
-        paddingHorizontal: 16,
-        paddingTop: 60,             
-        paddingBottom: 32,
-    },
-
-    // Language switcher
-    langRow: {
-        flexDirection: 'row',      
-        alignSelf: 'flex-end',     
-        backgroundColor: '#fff',
-        borderRadius: 999,
-        padding: 4,
-        gap: 2,
-    },
-    langChip: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 999,
-    },
-    langChipActive: {
-        backgroundColor: '#C0392B',
-    },
-    langChipText: {
-        fontSize: 13,
-        color: '#6B6B6B',
-    },
-    langChipTextActive: {
-        color: '#fff',
-        fontWeight: '600',
-    },
-
-    // Hero section
-    heroSection: {
-        alignItems: 'center',        
-        marginTop: 32,
-        marginBottom: 32,
-    },
-    iconBox: {
-        width: 80,
-        height: 80,
-        borderRadius: 20,
-        backgroundColor: '#E8714A',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-    iconEmoji: {
-        fontSize: 36,
-    },
-    appName: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#1A1A1A',
-        textAlign: 'center',
-        lineHeight: 40,
-        marginBottom: 10,
-    },
-    tagline: {
-        fontSize: 15,
-        color: '#6B6B6B',
-        textAlign: 'center',
-    },
-
-    // Cards
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-    },
-    cardRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',  // pushes children to opposite ends
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    cardTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#1A1A1A',
-    },
-    cardSub: {
-        fontSize: 13,
-        color: '#6B6B6B',
-    },
-
-    progressTrack: {
-        height: 6,
-        backgroundColor: '#E8E0D8',
-        borderRadius: 999,
-        marginBottom: 8,
-    },
-    progressFill: {
-        height: 6,
-        backgroundColor: '#C0392B',
-        borderRadius: 999,
-    },
-    progressPercent: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#C0392B',
-    },
-
-    locationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    locationIconBox: {
-        width: 40,
-        height: 40,
-        borderRadius: 999,
-        backgroundColor: '#FAE8E8',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    locationTextBox: {
-        flex: 1,         
-    },
-
-    allowBtn: {
-        backgroundColor: '#FAE8E8',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 999,
-    },
-    allowBtnText: {
-        color: '#C0392B',
-        fontWeight: '600',
-        fontSize: 13,
-    },
-    grantedText: {
-        color: '#2ECC71',
-        fontWeight: '600',
-        fontSize: 13,
-    },
-
-    continueBtn: {
-        backgroundColor: '#C0392B',
-        borderRadius: 16,
-        paddingVertical: 18,
-        alignItems: 'center',
-    },
-    continueBtnText: {
-        color: '#fff',
-        fontSize: 17,
-        fontWeight: '600',
-    },
+  screen: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 54,
+    paddingBottom: 36,
+  },
+  topBar: {
+    alignItems: 'flex-end',
+    marginBottom: 0,  
+  },
+  langContainer: {
+    flexDirection: 'row',
+    borderRadius: 24,
+    padding: 3,
+  },
+  langPill: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+  },
+  langText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  heroSection: {
+    alignItems: 'center',
+    marginTop: 0,
+    marginBottom: 25,
+  },
+    logoClipper: {
+    width: 220,
+    height: 180, 
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    marginTop: 30,
+    marginBottom:30,
+  },
+  logo: {
+    width: 300,
+    height: 300,
+    marginBottom: 0,
+  },
+  appName: {
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    marginBottom: 6,
+  },
+  tagline: {
+    fontSize: 15,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+  card: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 18,
+    marginBottom: 16,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  percentText: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  progressTrack: {
+    height: 7,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  subText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  pinCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  locationInfo: {
+    flex: 1,
+  },
+  locationSub: {
+    fontSize: 13,
+    marginTop: 2,
+    lineHeight: 18,
+  },
+  allowBtn: {
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: 20,
+  },
+  allowBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  continueBtn: {
+    width: '100%',
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#FF7A5C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+  },
+  continueBtnText: {
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
 });

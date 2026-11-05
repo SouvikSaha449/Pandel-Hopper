@@ -4,8 +4,14 @@ export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="splash" />
-      <Stack.Screen name="welcome" />
+      <Stack.Screen name="splash" options={{ animation: 'none' }} />
+      <Stack.Screen
+        name="welcome"
+        options={{
+          animation: 'fade',
+          animationDuration: 400, 
+        }}
+      />
     </Stack>
   );
 }

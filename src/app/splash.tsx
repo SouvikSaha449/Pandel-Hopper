@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Image, StyleSheet, Text, View, useColorScheme, useWindowDimensions } from 'react-native';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
+import { useRouter } from 'expo-router';
 
-const NATIVE = 200;   // = imageWidth in app.json; the logo grows from this size
-const LOGO = 360;     // final size, as in the mockup
+const NATIVE = 200;
+const LOGO = 360;
 const HOLD_MS = 1300;
 
 const LIGHT = { bg: '#FBF7F0', text: '#2A1F1A', muted: '#6B5B52', accent: '#C8341F', glow: '#F2B04A', glowAlpha: 0.28 };
@@ -11,17 +12,19 @@ const DARK = { bg: '#171325', text: '#F3EEF8', muted: '#B8AECB', accent: '#FF7A5
 
 type Props = { title?: string; tagline?: string; onDone: () => void };
 
-export default function AnimatedSplash({ title = 'Pandal Hopping', tagline = 'Plan your route. Works offline.', onDone }: Props) {
+export default function AnimatedSplash({ title = 'Pandal Hopper', tagline = 'Plan your route', onDone }: Props) {
     const c = useColorScheme() === 'dark' ? DARK : LIGHT;
     const { height } = useWindowDimensions();
     const move = useRef(new Animated.Value(0)).current;
     const dots = useRef(new Animated.Value(0)).current;
     const out = useRef(new Animated.Value(1)).current;
     const [still, setStill] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         let alive = true;
         let loop: Animated.CompositeAnimation | undefined;
+
         AccessibilityInfo.isReduceMotionEnabled().then((reduce) => {
             if (!alive) return;
             if (reduce) {
@@ -29,13 +32,22 @@ export default function AnimatedSplash({ title = 'Pandal Hopping', tagline = 'Pl
                 move.setValue(1);
             } else {
                 Animated.timing(move, { toValue: 1, duration: 600, delay: 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
-                loop = Animated.loop(Animated.timing(dots, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true }));
+                loop = Animated.loop(Animated.timing(dots, { toValue: 1, duration: 2000, easing: Easing.linear, useNativeDriver: true }));
                 loop.start();
             }
-            //   Animated.timing(out, { toValue: 0, duration: 300, delay: HOLD_MS, useNativeDriver: true })
-            //     .start(({ finished }) => finished && alive && onDone());
         });
-        return () => { alive = false; loop?.stop(); };
+
+        const timer = setTimeout(() => {
+            if (alive) {
+                router.replace('/welcome');
+            }
+        }, HOLD_MS);
+
+        return () => {
+            alive = false;
+            loop?.stop();
+            clearTimeout(timer);
+        };
     }, []);
 
     const start = height / 2;
@@ -43,8 +55,15 @@ export default function AnimatedSplash({ title = 'Pandal Hopping', tagline = 'Pl
     const logoY = move.interpolate({ inputRange: [0, 1], outputRange: [0, end - start] });
     const logoScale = move.interpolate({ inputRange: [0, 1], outputRange: [NATIVE / LOGO, 1] });
     const textY = move.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
-    const dot = (i: number) =>
-        dots.interpolate({ inputRange: [0, 0.2 + i * 0.2, 0.4 + i * 0.2, 1], outputRange: [0.25, 0.25, 1, 0.25], extrapolate: 'clamp' });
+    const pulse = (i: number) => {
+        const center = i / 3 + 0.15;        // dot 0 → 0.15, dot 1 → 0.48, dot 2 → 0.82
+        const half = 0.12;                   // each dot's fade window (must be < gap of 0.33)
+        const range = [center - half, center, center + half];
+        return {
+            opacity: dots.interpolate({ inputRange: range, outputRange: [0.2, 1, 0.2], extrapolate: 'clamp' }),
+            scale: dots.interpolate({ inputRange: range, outputRange: [1, 1, 1], extrapolate: 'clamp' }),
+        };
+    };
 
     return (
         <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.bg, opacity: out }]}>
@@ -69,10 +88,20 @@ export default function AnimatedSplash({ title = 'Pandal Hopping', tagline = 'Pl
             </Animated.View>
 
             <View style={{ position: 'absolute', left: 0, right: 0, bottom: 64, alignItems: 'center', gap: 16 }}>
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                    {[0, 1, 2].map((i) => (
-                        <Animated.View key={i} style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.accent, opacity: still ? 0.6 : dot(i) }} />
-                    ))}
+                <View style={{ flexDirection: 'row', gap: 10, height: 16, alignItems: 'center' }}>
+                    {[0, 1, 2].map((i) => {
+                        const p = pulse(i);
+                        return (
+                            <Animated.View
+                                key={i}
+                                style={{
+                                    width: 8, height: 8, borderRadius: 4, backgroundColor: c.accent,
+                                    opacity: still ? 0.6 : p.opacity,
+                                    transform: [{ scale: still ? 1 : p.scale }],
+                                }}
+                            />
+                        );
+                    })}
                 </View>
                 <Text style={{ fontSize: 14, color: c.muted }}>{tagline}</Text>
             </View>

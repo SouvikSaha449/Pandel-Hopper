@@ -1,56 +1,25 @@
-# Welcome to your Expo app 👋
+# 🎪 Pandal Hopping (Kolkata Durga Puja Guide)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An offline-first mobile application built with **React Native**, **Expo Router**, and **TypeScript** designed to help over 4+ million festival-goers explore, curate, and walk Durga Puja pandal trails across Kolkata without cellular data dependency.
 
-## Get started
+---
 
-1. Install dependencies
+## 💡 The Problem
+During Durga Puja, dense crowds and narrow heritage lanes cause cellular mobile data networks to jam completely. Web-based maps and search engines fail right when visitors need them most. Route plans get lost in chat screenshots, and dynamic traffic closures change every evening.
 
-   ```bash
-   npm install
-   ```
+## 🚀 The Solution
+- **100% Offline-First Architecture:** Bundled offline Kolkata map and curated database of 248+ historic, traditional, and theme pandals across 20 distinct zones.
+- **Smart Trail Planning:** Custom route builder with nearest-neighbor order optimization and walking time estimations based on real pedestrian trail formulas.
+- **Dynamic Updates:** Online polling pipeline for nightly police closures, traffic notices, and no-vehicle zones that caches the latest bulletin locally.
+- **Trilingual & Inclusive:** Full interface localization across English, Bengali (featuring native Bengali digits), and Hindi with WCAG-compliant high-contrast themes (Light/Dark).
+- **Privacy By Design:** Zero tracking, no server backend, and no account creation. Custom routes are shared as lightweight deep-link payloads.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🛠️ Tech Stack & Architecture
+- **Framework:** React Native 0.76+ / Expo SDK 52+ (Managed Workflow)
+- **Routing:** Expo Router (File-based navigation & deep linking)
+- **State Management:** Zustand with AsyncStorage local persistence
+- **Animation Engine:** React Native Reanimated & React Native SVG (Hardware-accelerated native animations with `AccessibilityInfo` reduce-motion compliance)
+- **Language:** TypeScript with strict type-safety
+- **Localization:** i18next & react-i18next

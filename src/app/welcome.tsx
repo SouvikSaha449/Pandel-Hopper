@@ -81,7 +81,7 @@ export default function WelcomeScreen() {
   }
 
   function handleContinue() {
-    router.replace('/(tabs)');
+    router.replace('/(tabs)' as any) ;
   }
 
   const languages = [

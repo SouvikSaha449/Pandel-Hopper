@@ -12,6 +12,7 @@ export default function RootLayout() {
           animationDuration: 400, 
         }}
       />
+      <Stack.Screen name='(tabs)' options={{animation: 'fade'}} />
     </Stack>
   );
 }

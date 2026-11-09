@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -68,6 +68,20 @@ export default function WelcomeScreen() {
   const [progress] = useState(62);
   const [downloaded] = useState(92);
   const [total] = useState(148);
+
+  useEffect(() => {
+    async function checkPermission() {
+      try {
+        const { status } = await Location.getForegroundPermissionsAsync();
+        if (status === 'granted') {
+          setLocationGranted(true);
+        }
+      } catch (e) {
+        console.warn('Could not check location permission', e);
+      }
+    }
+    checkPermission();
+  }, []);
 
   async function handleAllowLocation() {
     try {
@@ -173,7 +187,6 @@ export default function WelcomeScreen() {
         </View>
       </View>
 
-      {/* Card 2: Location Permission */}
       <View
         style={[
           styles.card,
@@ -181,7 +194,7 @@ export default function WelcomeScreen() {
         ]}
       >
         <View style={styles.locationRow}>
-          {/* Location Pin Icon */}
+
           <View style={[styles.pinCircle, { backgroundColor: colors.pinBg }]}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path
@@ -191,7 +204,6 @@ export default function WelcomeScreen() {
             </Svg>
           </View>
 
-          {/* Location Description */}
           <View style={styles.locationInfo}>
             <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>
               Show pujas near you
@@ -201,7 +213,6 @@ export default function WelcomeScreen() {
             </Text>
           </View>
 
-          {/* Action Button */}
           {!locationGranted ? (
             <TouchableOpacity
               activeOpacity={0.8}
@@ -224,7 +235,6 @@ export default function WelcomeScreen() {
 
       <View style={{ flex: 1 }} />
 
-      {/* Primary Continue Button */}
       <TouchableOpacity
         activeOpacity={0.88}
         onPress={handleContinue}

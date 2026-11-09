@@ -8,14 +8,21 @@
     "scheme": "pandelhopper",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Show Durga Puja pandals near your location."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/pandel_hopper_logo.png",
         "backgroundColor": "#FBF7F0"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "output": "server",
@@ -34,6 +41,12 @@
             "image": "./assets/images/pandel_hopper_logo.png",
             "backgroundColor": "#171325"
           }
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationInUsePermission" : "Show Durga Puja pandals near your location."
         }
       ]
     ],

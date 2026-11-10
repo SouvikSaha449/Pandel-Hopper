@@ -46,9 +46,10 @@
       [
         "expo-location",
         {
-          "locationInUsePermission" : "Show Durga Puja pandals near your location."
+          "locationInUsePermission": "Show Durga Puja pandals near your location."
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,

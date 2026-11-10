@@ -11,10 +11,11 @@ import {
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
 import Svg, { Path } from 'react-native-svg';
+import { LANGS, setLanguage, useNumber, useTranslation } from '@/i18n';
+import { usePrefs } from '@/store/prefs';
 
 const { width } = Dimensions.get('window');
 
-// Dark & Light theme palettes matching Durga Puja aesthetics
 const THEMES = {
   dark: {
     bg: '#171325',
@@ -54,14 +55,15 @@ const THEMES = {
   },
 };
 
-type Language = 'en' | 'bn' | 'hi';
 
 export default function WelcomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const colors = isDark ? THEMES.dark : THEMES.light;
 
-  const [language, setLanguage] = useState<Language>('en');
+ const {t} = useTranslation();
+ const language = usePrefs((s)=>s.lang)
+ const num = useNumber();
   const [locationGranted, setLocationGranted] = useState(false);
 
  
@@ -98,18 +100,12 @@ export default function WelcomeScreen() {
     router.replace('/(tabs)' as any) ;
   }
 
-  const languages = [
-    { code: 'en' as const, label: 'EN' },
-    { code: 'bn' as const, label: 'বাং' },
-    { code: 'hi' as const, label: 'हिं' },
-  ];
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.bg }]}>
-      {/* Top Bar with Language Selector */}
       <View style={styles.topBar}>
         <View style={[styles.langContainer, { backgroundColor: colors.langContainer }]}>
-          {languages.map((item) => {
+          {LANGS.map((item) => {
             const active = language === item.code;
             return (
               <TouchableOpacity
@@ -145,14 +141,13 @@ export default function WelcomeScreen() {
           />
         </View>
         <Text style={[styles.appName, { color: colors.textPrimary }]}>
-          Pandal Hopper
+          {t('appName')}
         </Text>
         <Text style={[styles.tagline, { color: colors.textMuted }]}>
-          Plan your Durga Puja route. Works offline.
+                  {t('welcome.tagline')}
         </Text>
       </View>
 
-      {/* Card 1: Offline Map Download Progress */}
       <View
         style={[
           styles.card,
@@ -160,11 +155,11 @@ export default function WelcomeScreen() {
         ]}
       >
         <View style={styles.cardHeader}>
-          <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>
-            Downloading Kolkata map
+          <Text style={[styles.cardTitle, { flex: 1,color: colors.textPrimary }]}>
+            {t('welcome.downloading')}
           </Text>
           <Text style={[styles.percentText, { color: colors.accent }]}>
-            {progress}%
+             {num(progress)}%
           </Text>
         </View>
 
@@ -179,10 +174,10 @@ export default function WelcomeScreen() {
 
         <View style={styles.cardFooter}>
           <Text style={[styles.subText, { color: colors.textMuted }]}>
-            {downloaded} of {total} MB
+            {t('welcome.ofMb', { done: num(downloaded), total: num(total) })}
           </Text>
           <Text style={[styles.subText, { color: colors.textMuted }]}>
-            Wi-Fi recommended
+            {t('welcome.wifi')}
           </Text>
         </View>
       </View>
@@ -206,10 +201,10 @@ export default function WelcomeScreen() {
 
           <View style={styles.locationInfo}>
             <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>
-              Show pujas near you
+               {t('welcome.showNear')}
             </Text>
             <Text style={[styles.locationSub, { color: colors.textMuted }]}>
-              Location is used only on your phone
+              {t('welcome.locationNote')}
             </Text>
           </View>
 
@@ -220,13 +215,13 @@ export default function WelcomeScreen() {
               style={[styles.allowBtn, { backgroundColor: colors.allowBtnBg }]}
             >
               <Text style={[styles.allowBtnText, { color: colors.allowBtnText }]}>
-                Allow
+                 {t('welcome.allow')}
               </Text>
             </TouchableOpacity>
           ) : (
             <View style={[styles.allowBtn, { backgroundColor: '#1C3829' }]}>
               <Text style={[styles.allowBtnText, { color: '#4ADE80' }]}>
-                ✓ On
+                {t('welcome.on')}
               </Text>
             </View>
           )}
@@ -241,7 +236,7 @@ export default function WelcomeScreen() {
         style={[styles.continueBtn, { backgroundColor: colors.continueBtn }]}
       >
         <Text style={[styles.continueBtnText, { color: colors.continueBtnText }]}>
-          Continue
+          {t('common.continue')}
         </Text>
       </TouchableOpacity>
     </View>
@@ -312,8 +307,9 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 12,
+    gap: 20,
   },
   cardTitle: {
     fontSize: 16,
@@ -336,6 +332,7 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
   subText: {
     fontSize: 13,

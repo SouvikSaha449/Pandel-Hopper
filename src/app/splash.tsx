@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Image, StyleSheet, Text, View, useColorScheme, useWindowDimensions } from 'react-native';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const NATIVE = 200;
 const LOGO = 360;
@@ -12,7 +13,10 @@ const DARK = { bg: '#171325', text: '#F3EEF8', muted: '#B8AECB', accent: '#FF7A5
 
 type Props = { title?: string; tagline?: string; onDone: () => void };
 
-export default function AnimatedSplash({ title = 'Pandal Hopper', tagline = 'Plan your route', onDone }: Props) {
+export default function AnimatedSplash({ title, tagline, onDone }: Props) {
+    const {t} = useTranslation();
+    const displayTitle = title ?? t('appName')
+    const displayTagLine = tagline ?? t('welcome.splashTagLine')
     const c = useColorScheme() === 'dark' ? DARK : LIGHT;
     const { height } = useWindowDimensions();
     const move = useRef(new Animated.Value(0)).current;
@@ -56,8 +60,8 @@ export default function AnimatedSplash({ title = 'Pandal Hopper', tagline = 'Pla
     const logoScale = move.interpolate({ inputRange: [0, 1], outputRange: [NATIVE / LOGO, 1] });
     const textY = move.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
     const pulse = (i: number) => {
-        const center = i / 3 + 0.15;        // dot 0 → 0.15, dot 1 → 0.48, dot 2 → 0.82
-        const half = 0.12;                   // each dot's fade window (must be < gap of 0.33)
+        const center = i / 3 + 0.15;        
+        const half = 0.12;                   
         const range = [center - half, center, center + half];
         return {
             opacity: dots.interpolate({ inputRange: range, outputRange: [0.2, 1, 0.2], extrapolate: 'clamp' }),
@@ -84,7 +88,7 @@ export default function AnimatedSplash({ title = 'Pandal Hopper', tagline = 'Pla
             </Animated.View>
 
             <Animated.View style={{ position: 'absolute', left: 0, right: 0, top: end + LOGO / 2 + 0, alignItems: 'center', opacity: move, transform: [{ translateY: textY }] }}>
-                <Text style={{ fontSize: 32, fontWeight: '700', color: c.text }}>{title}</Text>
+                <Text style={{ fontSize: 32, fontWeight: '700', color: c.text }}>{displayTitle}</Text>
             </Animated.View>
 
             <View style={{ position: 'absolute', left: 0, right: 0, bottom: 64, alignItems: 'center', gap: 16 }}>
@@ -103,7 +107,7 @@ export default function AnimatedSplash({ title = 'Pandal Hopper', tagline = 'Pla
                         );
                     })}
                 </View>
-                <Text style={{ fontSize: 14, color: c.muted }}>{tagline}</Text>
+                <Text style={{ fontSize: 14, color: c.muted }}>{displayTagLine}</Text>
             </View>
         </Animated.View>
     );

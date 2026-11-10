@@ -2,6 +2,7 @@ import { View, TextInput, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation } from 'react-i18next';
 
 interface MapSearchBarProps {
   value?: string;
@@ -12,8 +13,9 @@ interface MapSearchBarProps {
 export function MapSearchBar({
   value = '',
   onChangeText,
-  placeholder = 'Search pandals, areas, metro...',
+  placeholder,
 }: MapSearchBarProps) {
+  const {t} = useTranslation();
   const colors = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -31,7 +33,7 @@ export function MapSearchBar({
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder={isFocused ? '' : placeholder}
+        placeholder={isFocused ? '' : (placeholder ?? t('map.searchPlaceholder'))}
         placeholderTextColor={colors.textMuted}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}

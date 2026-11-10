@@ -1,6 +1,8 @@
 import { ScrollView, Pressable, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { AREAS } from '@/constants/areas';
+import { AREA_KEYS } from '@/constants/areas';
+import { useTranslation } from 'react-i18next';
 
 interface AreaFilterChipsProps {
   selectedArea: string;
@@ -9,6 +11,8 @@ interface AreaFilterChipsProps {
 
 export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsProps) {
   const colors = useTheme();
+  const FILTER_KEYS = ['all', ...AREA_KEYS] as const
+  const {t} = useTranslation()
 
   return (
     <ScrollView
@@ -16,12 +20,14 @@ export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsP
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.chipsScroll}
     >
-      {AREAS.map((area) => {
-        const isSelected = selectedArea === area;
+      {FILTER_KEYS.map((key) => {
+        const isSelected = selectedArea === key;
+        const label = key === 'all' ? t('notices.all') : t(`map.areas.${key}`);
+
         return (
           <Pressable
-            key={area}
-            onPress={() => onSelectArea(isSelected ? 'All' : area)}
+            key={key}
+            onPress={() => onSelectArea(isSelected ? 'all' : key)}
             style={[
               styles.chip,
               {
@@ -36,7 +42,7 @@ export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsP
                 { color: isSelected ? '#FFFFFF' : colors.text },
               ]}
             >
-              {area}
+              {label}
             </Text>
           </Pressable>
         );

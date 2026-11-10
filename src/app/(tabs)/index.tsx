@@ -8,7 +8,7 @@ import { MapSearchBar } from '@/components/map/MapSearchBar';
 export default function MapScreen() {
     const colors = useTheme()
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedArea, setSelectedArea] = useState<string>('All');
+    const [selectedArea, setSelectedArea] = useState<string>('all');
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.bg }]}>
             <View style={[styles.header]}>

@@ -1,12 +1,44 @@
 import { Tabs } from 'expo-router';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import { useTheme } from '@/hooks/use-theme'
 import { useTranslation } from '@/i18n';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { ComponentProps } from 'react';
+
+type IconName = ComponentProps<typeof Ionicons>['name']
+
+function TabIcon({
+  name,
+  focused,
+  color,
+  accentBg,
+}: {
+  name: IconName;
+  focused: boolean;
+  color: string;
+  accentBg: string;
+}) {
+  return (
+    <View
+      style={{
+        width: 56,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: focused ? accentBg : 'transparent',
+      }}
+    >
+      <Ionicons name={name} size={22} color={color} />
+    </View>
+  );
+}
 
 export default function TabLayout() {
   const { t } = useTranslation();
-    const colors = useTheme();
+  const colors = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -14,39 +46,73 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.tabInactive,
-        tabBarStyle: [
-            styles.tabBar,
-            {backgroundColor:colors.tabBar , borderTopColor:colors.border,}
-        ],
+        tabBarStyle: {
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.border,
+          height: 64 + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, 8),
+          paddingTop: 8,
+        },
         tabBarLabelStyle : styles.tabBarLabel
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title:  t('tab.map'),
-          tabBarIcon: ({ color,focused }) => <Ionicons name ={focused? 'map' : 'map-outline'} size={24} color={color as string} />,
+          title: t('tab.map'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              name={focused ? 'map' : 'map-outline'}
+              focused={focused}
+              color={color as string}
+              accentBg={colors.accentBg}
+            />
+          ),
         }}
       />
+
       <Tabs.Screen
         name="routes"
         options={{
           title: t('tab.routes'),
-          tabBarIcon: ({ color,focused }) => <Ionicons name = {focused ? 'navigate' : 'navigate-outline'} size = {24} color={color as string} />,
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              name={focused ? 'navigate' : 'navigate-outline'}
+              focused={focused}
+              color={color as string}
+              accentBg={colors.accentBg}
+            />
+          ),
         }}
       />
+
       <Tabs.Screen
         name="saved"
         options={{
           title: t('tab.saved'),
-          tabBarIcon: ({ color,focused }) => <Ionicons name ={focused? 'bookmark' : 'bookmark-outline'} size={24} color={color as string} />,
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              name={focused ? 'bookmark' : 'bookmark-outline'}
+              focused={focused}
+              color={color as string}
+              accentBg={colors.accentBg}
+            />
+          ),
         }}
       />
+
       <Tabs.Screen
         name="settings"
         options={{
-          title:  t('tab.settings'),
-          tabBarIcon: ({ color,focused }) => <Ionicons name ={focused? 'settings' : 'settings-outline'} size={24} color={color as string} />,
+          title: t('tab.settings'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              name={focused ? 'settings' : 'settings-outline'}
+              focused={focused}
+              color={color as string}
+              accentBg={colors.accentBg}
+            />
+          ),
         }}
       />
     </Tabs>

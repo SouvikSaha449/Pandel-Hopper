@@ -1,6 +1,6 @@
 import { View, TextInput, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from 'react-i18next';
 
@@ -8,12 +8,14 @@ interface MapSearchBarProps {
   value?: string;
   onChangeText?: (text: string) => void;
   placeholder?: string;
+  right?: ReactNode;
 }
 
 export function MapSearchBar({
   value = '',
   onChangeText,
   placeholder,
+  right,
 }: MapSearchBarProps) {
   const {t} = useTranslation();
   const colors = useTheme();
@@ -44,18 +46,20 @@ export function MapSearchBar({
           <Ionicons name="close-circle" size={18} color={colors.textMuted} />
         </Pressable>
       )}
+      {right}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   searchPill: {
-    height: 48,
-    borderRadius: 24,
+    height: 52,
+    borderRadius: 26,
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingLeft: 16,
+    paddingRight: 10,
     gap: 10,
   },
   searchInput: {

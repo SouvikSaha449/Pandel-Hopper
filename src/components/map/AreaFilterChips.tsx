@@ -1,6 +1,5 @@
-import { ScrollView, Pressable, Text, StyleSheet } from 'react-native';
+import { ScrollView, Pressable, Text, StyleSheet,useColorScheme } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
-import { AREAS } from '@/constants/areas';
 import { AREA_KEYS } from '@/constants/areas';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +12,7 @@ export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsP
   const colors = useTheme();
   const FILTER_KEYS = ['all', ...AREA_KEYS] as const
   const {t} = useTranslation()
+  const isDark = useColorScheme() === 'dark';
 
   return (
     <ScrollView
@@ -39,7 +39,7 @@ export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsP
             <Text
               style={[
                 styles.chipText,
-                { color: isSelected ? '#FFFFFF' : colors.text },
+                { color: isSelected ? (isDark ? colors.bg : '#FFFFFF') : colors.text },
               ]}
             >
               {label}
@@ -54,16 +54,17 @@ export function AreaFilterChips({ selectedArea, onSelectArea }: AreaFilterChipsP
 const styles = StyleSheet.create({
   chipsScroll: {
     paddingTop: 12,
+    paddingHorizontal: 16,
     gap: 8,
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 22,
     borderWidth: 1,
   },
   chipText: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

@@ -1,12 +1,14 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { useNumber, useTranslation } from '@/i18n';
 import { useTheme } from '@/hooks/use-theme';
 import { useRoutesStore } from '@/store/routes';
 import { RoutesEmptyState } from './RoutesEmptyState';
 
+
 export function HistoryTab() {
   const colors = useTheme();
   const { t } = useTranslation();
+  const formatNumber = useNumber();
 
   const history = useRoutesStore((s) => s.history);
   const totalPujas = history.reduce((sum, h) => sum + h.stopsCount, 0);
@@ -26,7 +28,7 @@ export function HistoryTab() {
             ]}
           >
             <View style={styles.statCol}>
-              <Text style={[styles.statValue, { color: colors.text }]}>{totalPujas}</Text>
+              <Text style={[styles.statValue, { color: colors.text }]}>{formatNumber(totalPujas)}</Text>
               <Text style={[styles.statLabel, { color: colors.textMuted }]}>
                 {t('history.pujasVisited')}
               </Text>
@@ -35,7 +37,7 @@ export function HistoryTab() {
             <View style={[styles.statDivider, { backgroundColor: colors.cardBorder }]} />
 
             <View style={styles.statCol}>
-              <Text style={[styles.statValue, { color: colors.text }]}>{history.length}</Text>
+              <Text style={[styles.statValue, { color: colors.text }]}>{formatNumber(history.length)}</Text>
               <Text style={[styles.statLabel, { color: colors.textMuted }]}>
                 {t('history.routesDone')}
               </Text>
@@ -45,7 +47,7 @@ export function HistoryTab() {
 
             <View style={styles.statCol}>
               <Text style={[styles.statValue, { color: colors.text }]}>
-                {totalKm.toFixed(1)}
+                {formatNumber(totalKm.toFixed(1))}
               </Text>
               <Text style={[styles.statLabel, { color: colors.textMuted }]}>
                 {t('history.walked')}
@@ -60,11 +62,11 @@ export function HistoryTab() {
           ) : null}
         </View>
       }
-      ListEmptyComponent={
+       ListEmptyComponent={
         <RoutesEmptyState
           icon="footsteps-outline"
-          title="No completed walks yet"
-          subtitle="Complete a route to log your pandal hopping stats here."
+          title={t('history.emptyTitle')}
+          subtitle={t('history.emptySubtitle')}
         />
       }
       renderItem={({ item }) => (

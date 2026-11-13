@@ -10,6 +10,7 @@ const bn: Strings = {
   common: {
     done: 'হয়েছে',
     back: 'পিছনে',
+    cancel: 'বাতিল',
     close: 'বন্ধ করুন',
     start: 'শুরু',
     go: 'যান',
@@ -126,6 +127,13 @@ const bn: Strings = {
     iAmHere: 'আমি এখানে',
     next: 'পরেরটি',
     visitedAt: '{{time}} এ দেখেছেন',
+    emptyCustomTitle: 'এখনও কোনো নিজস্ব রুট নেই',
+    emptyCustomSubtitle: 'পছন্দের রুট বানাতে ওপরের "+ নিজের রুট বানান" বোতামে ট্যাপ করুন।',
+    endHop: 'পরিক্রমা সমাপ্ত',
+    endHopTitle: 'এই পরিক্রমা শেষ করবেন?',
+    endHopBody: 'পরিসংখ্যান সংরক্ষণ করতে এখনই শেষ করতে পারেন, অথবা থামিয়ে পরে আবার শুরু করতে পারেন।',
+    finishRoute: 'রুট সম্পূর্ণ করুন',
+    pauseAndExit: 'বিরতি ও প্রস্থান',
   },
   complete: {
     title: 'রুট সম্পূর্ণ!',
@@ -168,6 +176,8 @@ const bn: Strings = {
     walked: 'হাঁটা',
     more: '+ আরও',
     summary: '{{count}}টি পুজো · {{km}} কিমি',
+    emptyTitle: 'এখনও কোনো হাঁটা সম্পূর্ণ হয়নি',
+    emptySubtitle: 'এখানে আপনার পুজো পরিক্রমার পরিসংখ্যান দেখতে একটি রুট সম্পূর্ণ করুন।',
   },
   search: {
     cancel: 'মুছুন',

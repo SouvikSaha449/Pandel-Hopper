@@ -1,10 +1,11 @@
-// English strings. Every key here must also exist in bn.ts and hi.ts.
+
 const en = {
   appName: 'Pandal Hopping',
   tab: { map: 'Map', routes: 'Routes', saved: 'Saved', settings: 'Settings' },
   common: {
     done: 'Done',
     back: 'Back',
+    cancel: 'Cancel',
     close: 'Close',
     start: 'Start',
     go: 'Go',
@@ -117,6 +118,13 @@ const en = {
     iAmHere: 'I am here',
     next: 'next',
     visitedAt: 'Visited {{time}}',
+    emptyCustomTitle: 'No custom routes yet',
+    emptyCustomSubtitle: 'Tap "+ Create your own route" above to plan a custom walk.',
+    endHop: 'End Hop',
+    endHopTitle: 'End this hop?',
+    endHopBody: 'You can finish now to record your stats, or pause and return later.',
+    finishRoute: 'Finish Route',
+    pauseAndExit: 'Pause & Exit',
   },
   complete: {
     title: 'Route complete!',
@@ -159,6 +167,8 @@ const en = {
     walked: 'walked',
     more: '+ more',
     summary: '{{count}} pujas · {{km}} km',
+    emptyTitle: 'No completed walks yet',
+    emptySubtitle: 'Complete a route to log your pandal hopping stats here.',
   },
   search: {
     cancel: 'Clear',

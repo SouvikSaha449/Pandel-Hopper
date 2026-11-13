@@ -1,12 +1,12 @@
 import type { Strings } from './en';
 
-// Hindi strings. Rendered with the "Hind" font (Devanagari).
 const hi: Strings = {
   appName: 'पंडाल हॉपिंग',
   tab: { map: 'नक्शा', routes: 'रूट', saved: 'सेव किए', settings: 'सेटिंग्स' },
   common: {
     done: 'पूरा हुआ',
     back: 'वापस',
+    cancel: 'रद्द करें',
     close: 'बंद करें',
     start: 'शुरू करें',
     go: 'चलें',
@@ -119,6 +119,13 @@ const hi: Strings = {
     iAmHere: 'मैं यहाँ हूँ',
     next: 'अगला',
     visitedAt: '{{time}} पर देखा',
+    emptyCustomTitle: 'अभी कोई निजी रूट नहीं है',
+    emptyCustomSubtitle: 'पसंद का रूट बनाने के लिए ऊपर "+ अपना रूट बनाएँ" पर टैप करें।',
+    endHop: 'सफ़र समाप्त',
+    endHopTitle: 'क्या यह सफ़र समाप्त करें?',
+    endHopBody: 'आंकड़े दर्ज करने के लिए अभी पूरा करें, या रोककर बाद में जारी रखें।',
+    finishRoute: 'रूट पूरा करें',
+    pauseAndExit: 'रोकें और बाहर निकलें',
   },
   complete: {
     title: 'रूट पूरा हुआ!',
@@ -161,6 +168,8 @@ const hi: Strings = {
     walked: 'पैदल चले',
     more: '+ और',
     summary: '{{count}} पूजा · {{km}} किमी',
+    emptyTitle: 'अभी कोई सफ़র पूरा नहीं हुआ',
+    emptySubtitle: 'यहाँ अपने पंडाल हॉपिंग के आंकड़े देखने के लिए कोई रूट पूरा करें।',
   },
   search: {
     cancel: 'मिटाएँ',

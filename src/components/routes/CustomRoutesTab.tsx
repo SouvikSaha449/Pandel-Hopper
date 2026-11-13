@@ -5,6 +5,7 @@ import { computeRouteMetrics, useRoutesStore } from '@/store/routes';
 import { CreateRouteButton } from './CreateRouteButton';
 import { RouteCard } from './RouteCard';
 import { RoutesEmptyState } from './RoutesEmptyState';
+import { router } from 'expo-router';
 
 export function CustomRoutesTab() {
   const colors = useTheme();
@@ -33,7 +34,7 @@ export function CustomRoutesTab() {
         <RoutesEmptyState
           icon="map-outline"
           title={t('saved.emptyTitle')}
-          subtitle="Tap '+ Create your own route' above to plan a custom walk."
+          subtitle={t('routes.emptyCustomSubtitle')}
         />
       }
       renderItem={({ item }) => {
@@ -44,7 +45,12 @@ export function CustomRoutesTab() {
             subtitle={t('routes.draft', { count: item.stops.length })}
             stopsCount={item.stops.length}
             minutes={metrics.totalMinutes}
-            onPress={() => startRoute(item.id)}
+            onPress={() =>
+              router.push({
+                pathname: '/route/[id]',
+                params: { id: item.id },
+              })
+            }
           />
         );
       }}

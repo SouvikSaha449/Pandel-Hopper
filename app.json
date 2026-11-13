@@ -49,7 +49,9 @@
           "locationInUsePermission": "Show Durga Puja pandals near your location."
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -11,8 +11,9 @@ export default function RouteDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const tracker = useRouteTracker(id);
     const nextPuja = tracker.nextPuja;
+    const route = tracker.route;
 
-    if (!tracker.route) {
+    if (!route) {
         return (
             <SafeAreaView style={[styles.container, { backgroundColor: tracker.colors.bg }]}>
                 <View style={styles.header}>
@@ -49,9 +50,19 @@ export default function RouteDetailScreen() {
                 isComplete={tracker.isComplete}
                 hasNextStop={Boolean(nextPuja)}
                 onStart={tracker.handleStart}
+                onCustomize={() =>
+                    router.push({
+                        pathname: '/route/new',
+                        params: route.isCustom
+                            ? { edit: route.id }
+                            : { from: route.id },
+                    })
+                }
                 onArriveNext={nextPuja ? () => tracker.handleArrive(nextPuja.id) : undefined}
                 onEndHop={tracker.handleEndHop}
             />
+
+
         </SafeAreaView>
     );
 }

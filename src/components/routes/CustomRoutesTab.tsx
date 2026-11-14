@@ -21,7 +21,7 @@ export function CustomRoutesTab() {
       contentContainerStyle={styles.listContent}
       ListHeaderComponent={
         <View style={styles.listHeader}>
-          <CreateRouteButton />
+          <CreateRouteButton onPress={() => router.push('/route/new')} />
 
           {customRoutes.length > 0 ? (
             <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>

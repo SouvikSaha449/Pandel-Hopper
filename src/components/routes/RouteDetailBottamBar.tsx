@@ -10,6 +10,7 @@ interface RouteDetailBottomBarProps {
     onStart: () => void;
     onArriveNext?: () => void;
     onEndHop?: () => void;
+    onCustomize?: () => void; 
 }
 
 export function RouteDetailBottomBar({
@@ -19,6 +20,7 @@ export function RouteDetailBottomBar({
     onStart,
     onArriveNext,
     onEndHop,
+    onCustomize,
 }: RouteDetailBottomBarProps) {
 
     const colors = useTheme();
@@ -33,6 +35,20 @@ export function RouteDetailBottomBar({
         >
             {!isActive ? (
                 <View style={styles.buttonsRow}>
+                                {onCustomize ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={onCustomize}
+                style={({ pressed }) => [
+                  styles.secondaryBtn,
+                  { borderColor: colors.cardBorder, opacity: pressed ? 0.85 : 1 },
+                ]}
+              >
+                <Text style={[styles.secondaryBtnText, { color: colors.text }]}>
+                  {t('routes.customize')}
+                </Text>
+              </Pressable>
+            ) : null}
                     <Pressable
                         accessibilityRole="button"
                         onPress={onStart}

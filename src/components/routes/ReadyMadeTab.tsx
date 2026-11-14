@@ -31,7 +31,7 @@ export function ReadyMadeTab() {
             contentContainerStyle={styles.listContent}
             ListHeaderComponent={
                 <View style={styles.listHeader}>
-                    <CreateRouteButton />
+                    <CreateRouteButton onPress={()=> router.push('/route/new')} />
 
                     {activeRoute ? (
                         <View style={styles.sectionBlock}>

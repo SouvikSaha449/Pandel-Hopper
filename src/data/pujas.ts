@@ -276,3 +276,19 @@ export const getPuja = (id: string) => pujas.find((p) => p.id === id);
 export function replacePujas(next: Puja[]) {
   pujas.splice(0, pujas.length, ...next);
 }
+
+export function searchPujas(query: string, lang: Lang): Puja[] {
+  const trimmed = query.trim().toLowerCase();
+  if (!trimmed) return pujas;
+
+  return pujas.filter((p) => {
+    const nameInLang = pujaName(p, lang).toLowerCase();
+    const nameInEn = p.name.en.toLowerCase();
+    const area = p.area.toLowerCase();
+    return (
+      nameInLang.includes(trimmed) ||
+      nameInEn.includes(trimmed) ||
+      area.includes(trimmed)
+    );
+  });
+}

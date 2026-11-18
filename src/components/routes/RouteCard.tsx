@@ -11,6 +11,7 @@ interface RouteCardProps {
   minutes: number;
   progress?: { done: number; total: number };
   onPress: () => void;
+  onDelete?: () => void;
 }
 
 export function RouteCard({
@@ -20,6 +21,7 @@ export function RouteCard({
   minutes,
   progress,
   onPress,
+  onDelete,
 }: RouteCardProps) {
   const colors = useTheme();
   const { t } = useTranslation();
@@ -58,6 +60,20 @@ export function RouteCard({
             </Text>
           ) : null}
         </View>
+                {onDelete ? (
+          <Pressable
+            accessibilityLabel="Delete route"
+            accessibilityRole="button"
+            onPress={onDelete}
+            hitSlop={10}
+            style={({ pressed }) => [
+              styles.trashBtn,
+              { opacity: pressed ? 0.5 : 0.7 },
+            ]}
+          >
+            <Ionicons name="trash-outline" size={18} color={colors.accent} />
+          </Pressable>
+        ) : null}
       </View>
 
       <View style={styles.metaRow}>
@@ -111,6 +127,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
+  },
+    trashBtn: {
+    padding: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   titleCol: {
     flex: 1,

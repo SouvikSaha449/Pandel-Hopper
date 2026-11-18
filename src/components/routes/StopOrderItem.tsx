@@ -6,7 +6,6 @@ import { useNumber, useTranslation } from '@/i18n';
 interface StopOrderItemProps {
   index: number;
   pujaName: string;
-  subtitle?: string;
   isFirst: boolean;
   isLast: boolean;
   onMoveUp: () => void;
@@ -17,8 +16,6 @@ interface StopOrderItemProps {
 export function StopOrderItem({
   index,
   pujaName,
-  subtitle,
-  isFirst,
   isLast,
   onMoveUp,
   onMoveDown,
@@ -27,79 +24,51 @@ export function StopOrderItem({
   const colors = useTheme();
   const { t } = useTranslation();
   const formatNumber = useNumber();
-  const formattedIndex = formatNumber(index + 1);
-  const displayIndex = index < 9 ? `0${formattedIndex}` : formattedIndex;
 
   return (
     <View
       style={[
-        styles.row,
+        styles.card,
         { backgroundColor: colors.card, borderColor: colors.cardBorder },
       ]}
     >
-      <View style={[styles.badge, { backgroundColor: colors.accentBg, borderColor: colors.accent }]}>
-        <Text style={[styles.badgeText, { color: colors.accent }]}>
-          {displayIndex}
+
+      <View style={[styles.badge, { backgroundColor: colors.accent }]}>
+        <Text style={styles.badgeText}>
+          {formatNumber(index + 1)}
         </Text>
       </View>
 
-      <View style={styles.nameBlock}>
-        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
-          {pujaName}
-        </Text>
-        {subtitle ? (
-          <Text style={[styles.subtitle, { color: colors.textMuted }]} numberOfLines={1}>
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
+      <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+        {pujaName}
+      </Text>
 
-      <View style={styles.actions}>
-        <Pressable
-          accessibilityLabel="Move up"
-          disabled={isFirst}
-          onPress={onMoveUp}
-          style={({ pressed }) => [
-            styles.actionTile,
-            {
-              backgroundColor: colors.bg,
-              borderColor: colors.cardBorder,
-              opacity: isFirst ? 0.25 : pressed ? 0.7 : 1,
-            },
-          ]}
-        >
-          <Ionicons name="chevron-up" size={16} color={colors.text} />
-        </Pressable>
-
-        <Pressable
-          accessibilityLabel="Move down"
-          disabled={isLast}
-          onPress={onMoveDown}
-          style={({ pressed }) => [
-            styles.actionTile,
-            {
-              backgroundColor: colors.bg,
-              borderColor: colors.cardBorder,
-              opacity: isLast ? 0.25 : pressed ? 0.7 : 1,
-            },
-          ]}
-        >
-          <Ionicons name="chevron-down" size={16} color={colors.text} />
-        </Pressable>
-
+      <View style={styles.controlsRow}>
         <Pressable
           accessibilityLabel={t('common.close')}
+          accessibilityRole="button"
           onPress={onRemove}
+          hitSlop={8}
           style={({ pressed }) => [
-            styles.actionTile,
-            {
-              backgroundColor: colors.bg,
-              borderColor: colors.cardBorder,
-              opacity: pressed ? 0.7 : 1,
-            },
+            styles.iconBtn,
+            { opacity: pressed ? 0.5 : 0.75 },
           ]}
         >
-          <Ionicons name="close" size={16} color={colors.accent} />
+          <Ionicons name="close" size={18} color={colors.textMuted} />
+        </Pressable>
+
+        <Pressable
+          accessibilityLabel="Reorder"
+          accessibilityRole="button"
+          onPress={isLast ? onMoveUp : onMoveDown}
+          onLongPress={onMoveUp}
+          hitSlop={8}
+          style={({ pressed }) => [
+            styles.iconBtn,
+            { opacity: pressed ? 0.5 : 0.75 },
+          ]}
+        >
+          <Ionicons name="reorder-two-outline" size={20} color={colors.textMuted} />
         </Pressable>
       </View>
     </View>
@@ -107,49 +76,39 @@ export function StopOrderItem({
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+  card: {
+    height: 56,
     borderRadius: 16,
     borderWidth: 1,
-    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    gap: 12,
   },
   badge: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badgeText: {
-    fontSize: 12,
+    color: '#171325',
+    fontSize: 15,
     fontWeight: '800',
   },
-  nameBlock: {
-    flex: 1,
-    gap: 2,
-  },
   name: {
+    flex: 1,
     fontSize: 15,
     fontWeight: '700',
   },
-  subtitle: {
-    fontSize: 12,
-  },
-  actions: {
+  controlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 14,
   },
-  actionTile: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
-    borderWidth: 1,
+  iconBtn: {
+    padding: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

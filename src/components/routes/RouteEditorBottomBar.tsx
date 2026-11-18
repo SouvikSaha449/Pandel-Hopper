@@ -1,21 +1,38 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
-import { useTranslation } from '@/i18n';
+import { useNumber, useTranslation } from '@/i18n';
 
 interface RouteEditorBottomBarProps {
-  hasStops: boolean;
-  onDone: () => void;
+  stopsCount: number;
+  totalMinutes: number;
+  km: number;
+  canOptimize: boolean;
+  onOptimize: () => void;
   onStartRoute: () => void;
 }
 
 export function RouteEditorBottomBar({
-  hasStops,
-  onDone,
+  stopsCount,
+  totalMinutes,
+  km,
+  canOptimize,
+  onOptimize,
   onStartRoute,
 }: RouteEditorBottomBarProps) {
   const colors = useTheme();
   const { t } = useTranslation();
+  const formatNumber = useNumber();
+
+  const formattedDuration =
+    totalMinutes >= 60
+      ? t('common.duration', {
+          h: formatNumber(Math.floor(totalMinutes / 60)),
+          m: formatNumber(totalMinutes % 60),
+        })
+      : t('common.minutes', { m: formatNumber(totalMinutes) });
+
+  const hasStops = stopsCount > 0;
 
   return (
     <View
@@ -24,36 +41,50 @@ export function RouteEditorBottomBar({
         { backgroundColor: colors.card, borderTopColor: colors.cardBorder },
       ]}
     >
-      <View style={styles.bottomButtonsRow}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onDone}
-          style={({ pressed }) => [
-            styles.secondaryBtn,
-            { borderColor: colors.cardBorder, opacity: pressed ? 0.85 : 1 },
-          ]}
-        >
-          <Text style={[styles.secondaryBtnText, { color: colors.text }]}>
-            {t('common.done')}
+      <View style={styles.metricsRow}>
+        <View style={styles.metricsLeft}>
+          <Text style={[styles.mainMetrics, { color: colors.text }]}>
+            {t('common.pujas', { count: formatNumber(stopsCount) })} · {formattedDuration}
           </Text>
-        </Pressable>
+          <Text style={[styles.subMetrics, { color: colors.textMuted }]}>
+            {t('routes.walkingAbout', { km: formatNumber(km.toFixed(1)) })}
+          </Text>
+        </View>
 
         <Pressable
           accessibilityRole="button"
-          disabled={!hasStops}
-          onPress={onStartRoute}
+          disabled={!canOptimize}
+          onPress={onOptimize}
           style={({ pressed }) => [
-            styles.primaryBtn,
+            styles.optimizePill,
             {
-              backgroundColor: colors.accent,
-              opacity: !hasStops ? 0.4 : pressed ? 0.85 : 1,
+              backgroundColor: colors.accentBg,
+              borderColor: colors.cardBorder,
+              opacity: !canOptimize ? 0.35 : pressed ? 0.75 : 1,
             },
           ]}
         >
-          <Ionicons name="play" size={18} color="#FFFFFF" />
-          <Text style={styles.primaryBtnText}>{t('routes.startRoute')}</Text>
+          <Text style={[styles.optimizePillText, { color: colors.accent }]}>
+            {t('routes.optimize')}
+          </Text>
         </Pressable>
       </View>
+
+      <Pressable
+        accessibilityRole="button"
+        disabled={!hasStops}
+        onPress={onStartRoute}
+        style={({ pressed }) => [
+          styles.startBtn,
+          {
+            backgroundColor: colors.accent,
+            opacity: !hasStops ? 0.4 : pressed ? 0.85 : 1,
+          },
+        ]}
+      >
+        <Ionicons name="navigate" size={18} color="#171325" />
+        <Text style={styles.startBtnText}>{t('routes.startRoute')}</Text>
+      </Pressable>
     </View>
   );
 }
@@ -61,37 +92,51 @@ export function RouteEditorBottomBar({
 const styles = StyleSheet.create({
   bottomBar: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 16,
     borderTopWidth: 1,
-  },
-  bottomButtonsRow: {
-    flexDirection: 'row',
     gap: 12,
   },
-  primaryBtn: {
+  metricsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  metricsLeft: {
+    gap: 2,
     flex: 1,
-    height: 48,
-    borderRadius: 14,
+  },
+  mainMetrics: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  subMetrics: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  optimizePill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optimizePillText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  startBtn: {
+    height: 52,
+    borderRadius: 26,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
-  primaryBtnText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  secondaryBtn: {
-    flex: 1,
-    height: 48,
-    borderRadius: 14,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryBtnText: {
-    fontSize: 15,
-    fontWeight: '600',
+  startBtnText: {
+    color: '#171325',
+    fontSize: 16,
+    fontWeight: '800',
   },
 });

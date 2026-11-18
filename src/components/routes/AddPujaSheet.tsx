@@ -92,10 +92,15 @@ export function AddPujaSheet({
             onFocus={() => snapTo('full')}
           />
 
+
           <FlatList
             data={availablePujas}
             keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={5}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>

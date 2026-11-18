@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { memo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { pujaName, type Puja } from '@/data/pujas';
@@ -11,55 +12,59 @@ interface PujaPickerRowProps {
   onAdd: (id: string) => void;
 }
 
-export function PujaPickerRow({ puja, isAdded, lang, onAdd }: PujaPickerRowProps) {
-  const colors = useTheme();
+export const PujaPickerRow = memo(
+  function PujaPickerRow({ puja, isAdded, lang, onAdd }: PujaPickerRowProps) {
+    const colors = useTheme();
 
-  const name = pujaName(puja, lang);
-  const areaDisplay = puja.area.charAt(0).toUpperCase() + puja.area.slice(1);
-  const subtitle = puja.kind ? `${areaDisplay} · ${puja.kind}` : areaDisplay;
+    const name = pujaName(puja, lang);
+    const areaDisplay = puja.area.charAt(0).toUpperCase() + puja.area.slice(1);
+    const subtitle = puja.kind ? `${areaDisplay} · ${puja.kind}` : areaDisplay;
 
-  return (
-    <View style={[styles.row, { borderBottomColor: colors.cardBorder }]}>
-      {/* Leading Location Pin Icon */}
-      <View style={[styles.pinCircle, { backgroundColor: colors.accentBg }]}>
-        <Ionicons name="location-outline" size={14} color={colors.accent} />
-      </View>
+    return (
+      <View style={[styles.row, { borderBottomColor: colors.cardBorder }]}>
 
-      {/* Title & Subtitle */}
-      <View style={styles.infoCol}>
-        <Text
-          style={[styles.name, { color: isAdded ? colors.textMuted : colors.text }]}
-          numberOfLines={1}
-        >
-          {name}
-        </Text>
-        <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-          {subtitle}
-        </Text>
-      </View>
-
-      {/* Action Button: Added ✓ or + Add */}
-      {isAdded ? (
-        <View style={[styles.addedBadge, { backgroundColor: colors.accentBg, borderColor: colors.cardBorder }]}>
-          <Ionicons name="checkmark" size={14} color={colors.accent} />
-          <Text style={[styles.addedText, { color: colors.accent }]}>Added</Text>
+        <View style={[styles.pinCircle, { backgroundColor: colors.accentBg }]}>
+          <Ionicons name="location-outline" size={14} color={colors.accent} />
         </View>
-      ) : (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => onAdd(puja.id)}
-          style={({ pressed }) => [
-            styles.addBtn,
-            { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
-          ]}
-        >
-          <Ionicons name="add" size={16} color={colors.bg} />
-          <Text style={[styles.addBtnText, { color: colors.bg }]}>Add</Text>
-        </Pressable>
-      )}
-    </View>
-  );
-}
+
+        <View style={styles.infoCol}>
+          <Text
+            style={[styles.name, { color: isAdded ? colors.textMuted : colors.text }]}
+            numberOfLines={1}
+          >
+            {name}
+          </Text>
+          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+            {subtitle}
+          </Text>
+        </View>
+
+        {isAdded ? (
+          <View style={[styles.addedBadge, { backgroundColor: colors.accentBg, borderColor: colors.cardBorder }]}>
+            <Ionicons name="checkmark" size={14} color={colors.accent} />
+            <Text style={[styles.addedText, { color: colors.accent }]}>Added</Text>
+          </View>
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => onAdd(puja.id)}
+            style={({ pressed }) => [
+              styles.addBtn,
+              { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
+            ]}
+          >
+            <Ionicons name="add" size={16} color={colors.bg} />
+            <Text style={[styles.addBtnText, { color: colors.bg }]}>Add</Text>
+          </Pressable>
+        )}
+      </View>
+    );
+  },
+  (prev, next) =>
+    prev.isAdded === next.isAdded &&
+    prev.puja.id === next.puja.id &&
+    prev.lang === next.lang
+);
 
 const styles = StyleSheet.create({
   row: {

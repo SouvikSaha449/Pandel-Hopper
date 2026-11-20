@@ -5,7 +5,7 @@ interface ConfirmDialogProps {
     visible: boolean;
     title: string;
     message: string;
-    cancelLabel: string;
+    cancelLabel?: string;
     confirmLabel: string;
     onCancel: () => void;
     onConfirm: () => void;
@@ -40,22 +40,25 @@ export function ConfirmDialog({
                     <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
                     <Text style={[styles.message, { color: colors.textMuted }]}>{message}</Text>
                     <View style={styles.buttonRow}>
-                        <Pressable
-                            accessibilityRole="button"
-                            onPress={onCancel}
-                            style={({ pressed }) => [
-                                styles.btn,
-                                {
-                                    borderColor: colors.cardBorder,
-                                    borderWidth: 1,
-                                    opacity: pressed ? 0.75 : 1,
-                                },
-                            ]}
-                        >
-                            <Text style={[styles.btnText, { color: colors.text }]}>
-                                {cancelLabel}
-                            </Text>
-                        </Pressable>
+                        {cancelLabel ? (
+                            <Pressable
+                                accessibilityRole="button"
+                                onPress={onCancel}
+                                style={({ pressed }) => [
+                                    styles.btn,
+                                    {
+                                        borderColor: colors.cardBorder,
+                                        borderWidth: 1,
+                                        opacity: pressed ? 0.75 : 1,
+                                    },
+                                ]}
+                            >
+                                <Text style={[styles.btnText, { color: colors.text }]}>
+                                    {cancelLabel}
+                                </Text>
+                            </Pressable>
+                        ) : null}
+
                         <Pressable
                             accessibilityRole="button"
                             onPress={onConfirm}

@@ -111,7 +111,7 @@ const en = {
     newRoute: 'New route',
     name: 'Name',
     addPuja: 'Add a puja',
-    optimize: 'Optimize order',
+    optimize: 'Optimize',
     startRoute: 'Start route',
     walkingAbout: 'Walking, about {{km}} km',
     summary: '{{count}} pujas · {{time}}',

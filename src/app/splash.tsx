@@ -107,7 +107,7 @@ export default function AnimatedSplash({ title, tagline, onDone }: Props) {
                         );
                     })}
                 </View>
-                <Text style={{ fontSize: 14, color: c.muted }}>{displayTagLine}</Text>
+
             </View>
         </Animated.View>
     );

@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {Alert,Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,18 +11,47 @@ import { AddPujaSheet } from '@/components/routes/AddPujaSheet';
 import { RouteEditorBottomBar } from '@/components/routes/RouteEditorBottomBar';
 import { StopConnector } from '@/components/routes/StopConnector';
 import { StopOrderItem } from '@/components/routes/StopOrderItem';
+import { TransitAnchorCard } from '@/components/routes/TransitAnchorCard';
 import { HeaderActionButton } from '@/components/ui/HeaderActionButton';
+import { StopActionDialog } from '@/components/routes/StopActionDialog';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function RouteNewScreen() {
   const editor = useRouteEditor();
   const lang = usePrefs((s) => s.lang);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [activeStop, setActiveStop] = useState<{ index: number; name: string } | null>(null);
+
+  const handleStopPress = (index: number, stopName: string) => {
+    Alert.alert(
+      stopName,
+      'Choose an action for this stop:',
+      [
+        {
+          text: 'Set as Starting Point',
+          onPress: () => editor.setAsStart(index),
+        },
+        {
+          text: 'Set as Ending Point',
+          onPress: () => editor.setAsEnd(index),
+        },
+        {
+          text: 'Remove Stop',
+          style: 'destructive',
+          onPress: () => editor.removeStop(index),
+        },
+        {
+          text: editor.t('common.cancel'),
+          style: 'cancel',
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={[styles.container, { backgroundColor: editor.colors.bg }]}>
 
       <View style={styles.header}>
-
         <Pressable accessibilityRole="button" onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color={editor.colors.text} />
         </Pressable>
@@ -31,12 +60,11 @@ export default function RouteNewScreen() {
           {editor.isEditing ? editor.t('routes.customize') : editor.t('routes.newRoute')}
         </Text>
 
-        <HeaderActionButton 
-        label='Save' 
-        onPress={()=>editor.save('draft')} 
-        disabled={editor.stops.length === 0} 
+        <HeaderActionButton
+          label="Save"
+          onPress={() => editor.save('draft')}
+          disabled={editor.stops.length === 0}
         />
-
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -59,6 +87,14 @@ export default function RouteNewScreen() {
           </Text>
         </View>
 
+        {editor.firstTransit && (
+          <TransitAnchorCard
+            type="start"
+            stationName={`${editor.firstTransit.stationName} Metro`}
+            walkMinutes={editor.firstTransit.walkMinutes}
+          />
+        )}
+
         <View style={styles.stopsList}>
           {editor.stops.map((stopId, index) => {
             const puja = getPuja(stopId);
@@ -69,7 +105,6 @@ export default function RouteNewScreen() {
 
             return (
               <View key={stopId}>
-
                 {index > 0 && walkMin > 0 ? (
                   <StopConnector walkMinutes={walkMin} />
                 ) : null}
@@ -78,6 +113,7 @@ export default function RouteNewScreen() {
                   index={index}
                   isFirst={index === 0}
                   isLast={index === editor.stops.length - 1}
+                  onPress={() => setActiveStop({ index, name: pujaName(puja, lang) })}
                   pujaName={pujaName(puja, lang)}
                   onMoveUp={() => editor.moveUp(index)}
                   onMoveDown={() => editor.moveDown(index)}
@@ -88,7 +124,15 @@ export default function RouteNewScreen() {
           })}
         </View>
 
-                <Pressable
+        {editor.lastTransit && (
+          <TransitAnchorCard
+            type="end"
+            stationName={`${editor.lastTransit.stationName} Metro`}
+            walkMinutes={editor.lastTransit.walkMinutes}
+          />
+        )}
+
+        <Pressable
           accessibilityRole="button"
           onPress={() => setIsSheetOpen(true)}
           style={({ pressed }) => [
@@ -122,6 +166,26 @@ export default function RouteNewScreen() {
         onOptimize={editor.optimize}
         onStartRoute={() => editor.save('active')}
       />
+      <StopActionDialog
+        visible={activeStop !== null}
+        stopName={activeStop?.name ?? ''}
+        stopIndex={activeStop?.index ?? 0}
+        isFirst={activeStop?.index === 0}
+        isLast={activeStop?.index === editor.stops.length - 1}
+        onSetAsStart={() => activeStop && editor.setAsStart(activeStop.index)}
+        onSetAsEnd={() => activeStop && editor.setAsEnd(activeStop.index)}
+        onClose={() => setActiveStop(null)}
+      />
+
+      <ConfirmDialog
+        visible={editor.optimizeResult !== null}
+        title={editor.optimizeResult?.title ?? ''}
+        message={editor.optimizeResult?.message ?? ''}
+        cancelLabel={editor.optimizeResult?.previousStops ? 'Undo' : undefined}
+        confirmLabel="OK"
+        onCancel={editor.undoOptimize}
+        onConfirm={editor.dismissOptimizeResult}
+      />
     </SafeAreaView>
   );
 }
@@ -142,7 +206,7 @@ const styles = StyleSheet.create({
     marginLeft: -6,
   },
   headerTitle: {
-    flex:1,
+    flex: 1,
     fontSize: 18,
     fontWeight: '700',
   },
@@ -157,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 10,
   },
   nameInput: {
     flex: 1,
@@ -170,9 +234,9 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   stopsList: {
-    marginBottom: 4,
+    marginVertical: 4,
   },
-    addPujaBtn: {
+  addPujaBtn: {
     height: 56,
     borderRadius: 16,
     borderWidth: 1.5,
@@ -181,10 +245,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    marginTop: 6,
+    marginTop: 12,
   },
   addPujaBtnText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
   },
 });

@@ -8,6 +8,7 @@ interface StopOrderItemProps {
   pujaName: string;
   isFirst: boolean;
   isLast: boolean;
+  onPress?: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRemove: () => void;
@@ -17,6 +18,7 @@ export function StopOrderItem({
   index,
   pujaName,
   isLast,
+  onPress,
   onMoveUp,
   onMoveDown,
   onRemove,
@@ -33,15 +35,23 @@ export function StopOrderItem({
       ]}
     >
 
-      <View style={[styles.badge, { backgroundColor: colors.accent }]}>
-        <Text style={styles.badgeText}>
-          {formatNumber(index + 1)}
-        </Text>
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onPress}
+        style={({ pressed }) => [
+          styles.contentRow,
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
+      >
+        <View style={[styles.badge, { backgroundColor: colors.accent }]}>
+          <Text style={styles.badgeText}>{formatNumber(index + 1)}</Text>
+        </View>
 
-      <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
-        {pujaName}
-      </Text>
+        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+          {pujaName}
+        </Text>
+      </Pressable>
+
 
       <View style={styles.controlsRow}>
         <Pressable
@@ -49,10 +59,7 @@ export function StopOrderItem({
           accessibilityRole="button"
           onPress={onRemove}
           hitSlop={8}
-          style={({ pressed }) => [
-            styles.iconBtn,
-            { opacity: pressed ? 0.5 : 0.75 },
-          ]}
+          style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 0.75 }]}
         >
           <Ionicons name="close" size={18} color={colors.textMuted} />
         </Pressable>
@@ -63,10 +70,7 @@ export function StopOrderItem({
           onPress={isLast ? onMoveUp : onMoveDown}
           onLongPress={onMoveUp}
           hitSlop={8}
-          style={({ pressed }) => [
-            styles.iconBtn,
-            { opacity: pressed ? 0.5 : 0.75 },
-          ]}
+          style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 0.75 }]}
         >
           <Ionicons name="reorder-two-outline" size={20} color={colors.textMuted} />
         </Pressable>
@@ -83,7 +87,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    gap: 12,
+    gap: 8,
+  },
+  contentRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   badge: {
     width: 32,
@@ -105,11 +115,9 @@ const styles = StyleSheet.create({
   controlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 4,
   },
   iconBtn: {
-    padding: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 6,
   },
 });

@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { Alert } from 'react-native';
+import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/hooks/use-theme';
@@ -15,6 +14,7 @@ export function useRouteTracker(id?: string) {
   const colors = useTheme();
   const { t } = useTranslation();
   const lang = usePrefs((s) => s.lang);
+  const [isEndHopOpen, setIsEndHopOpen] = useState(false);
 
   const customRoutes = useRoutesStore((s) => s.customRoutes);
   const active = useRoutesStore((s) => s.active);
@@ -42,53 +42,36 @@ export function useRouteTracker(id?: string) {
     isActive && route ? route.stops.find((stopId) => !visitedMap[stopId]) : null;
   const nextPuja = nextStopId ? getPuja(nextStopId) : null;
 
-   const handleStart = () => {
+  const handleStart = () => {
     if (route) startRoute(route.id);
   };
 
   const handleArrive = (pujaId: string) => {
     if (!route) return;
     markVisited(pujaId);
-     if (visitedCount + 1 === route.stops.length) {
-      Alert.alert(
-        t('complete.title'),
-        `${route.title} - ${visitedCount + 1}/${route.stops.length} ${t('history.pujasVisited')}`,
-        [
-          {
-            text: t('common.done'),
-            onPress: () => {
-              completeActiveRoute(route.title, route.stops);
-              router.back();
-            },
-          },
-        ]
-      );
+    if (visitedCount + 1 === route.stops.length) {
+      completeActiveRoute(route.title, route.stops);
+      router.replace('/route/complete');
     }
   };
-   const handleEndHop = () => {
+
+  const handleEndHop = () => {
     if (!route) return;
-    Alert.alert(
-      t('routes.endHopTitle'),
-      t('routes.endHopBody'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('routes.finishRoute'),
-          onPress: () => {
-            completeActiveRoute(route.title, route.stops);
-            router.back();
-          },
-        },
-        {
-          text: t('routes.pauseAndExit'),
-          style: 'destructive',
-          onPress: () => clearActive(),
-        },
-      ]
-    );
+    setIsEndHopOpen(true);
   };
 
-   return {
+  const confirmFinishHop = () => {
+    if (!route) return;
+    setIsEndHopOpen(false);
+    completeActiveRoute(route.title, route.stops);
+    router.replace('/route/complete');
+  };
+
+  const closeEndHopDialog = () => {
+    setIsEndHopOpen(false);
+  };
+
+  return {
     route,
     metrics,
     isActive,
@@ -99,6 +82,9 @@ export function useRouteTracker(id?: string) {
     handleStart,
     handleArrive,
     handleEndHop,
+    isEndHopOpen,
+    confirmFinishHop,
+    closeEndHopDialog,
     unmarkVisited,
     lang,
     colors,

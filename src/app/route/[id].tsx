@@ -1,4 +1,4 @@
-import React from 'react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -62,7 +62,15 @@ export default function RouteDetailScreen() {
                 onEndHop={tracker.handleEndHop}
             />
 
-
+            <ConfirmDialog
+                visible={tracker.isEndHopOpen}
+                title={tracker.t('routes.endHopTitle')}
+                message={tracker.t('routes.endHopBody')}
+                cancelLabel={tracker.t('common.cancel')}
+                confirmLabel={tracker.t('routes.finishRoute')}
+                onCancel={tracker.closeEndHopDialog}
+                onConfirm={tracker.confirmFinishHop}
+            />
         </SafeAreaView>
     );
 }

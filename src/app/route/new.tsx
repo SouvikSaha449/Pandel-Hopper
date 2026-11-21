@@ -1,4 +1,4 @@
-import {Alert,Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import { TransitAnchorCard } from '@/components/routes/TransitAnchorCard';
 import { HeaderActionButton } from '@/components/ui/HeaderActionButton';
 import { StopActionDialog } from '@/components/routes/StopActionDialog';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { formatMetroName } from '@/data/metro';
 
 export default function RouteNewScreen() {
   const editor = useRouteEditor();
@@ -90,7 +91,7 @@ export default function RouteNewScreen() {
         {editor.firstTransit && (
           <TransitAnchorCard
             type="start"
-            stationName={`${editor.firstTransit.stationName} Metro`}
+            stationName={formatMetroName(editor.firstTransit.stationName, lang)}
             walkMinutes={editor.firstTransit.walkMinutes}
           />
         )}
@@ -127,7 +128,7 @@ export default function RouteNewScreen() {
         {editor.lastTransit && (
           <TransitAnchorCard
             type="end"
-            stationName={`${editor.lastTransit.stationName} Metro`}
+            stationName={formatMetroName(editor.lastTransit.stationName, lang)}
             walkMinutes={editor.lastTransit.walkMinutes}
           />
         )}

@@ -25,7 +25,7 @@ export function getNearestTransit(pujaId: string): TransitInfo | null {
   const walkMinutes = Math.max(3, Math.round(((minDist * 1.2) / 4.5) * 60));
 
   return {
-    stationName: nearestStation.name,
+    stationName: nearestStation.name.en,
     walkMinutes,
   };
 }

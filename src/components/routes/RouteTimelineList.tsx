@@ -2,10 +2,14 @@
 import { FlatList, StyleSheet, Text } from 'react-native';
 import { walkMinutes } from '@/data/geo';
 import { getPuja, pujaName } from '@/data/pujas';
+import { formatMetroName } from '@/data/metro';
+import { getNearestTransit } from '@/utils/route-transit';
+import { TransitAnchorCard } from './TransitAnchorCard';
 import type { useRouteTracker } from '@/hooks/use-route-tracker';
 import { NextStopCard } from './NextStopCard';
 import { RouteSummaryHeader } from './RouteSummaryHeader';
 import { StopTimelineItem } from './StopTimeLineItem';
+
 
 interface RouteTimelineListProps {
   tracker: ReturnType<typeof useRouteTracker>;
@@ -28,6 +32,9 @@ export function RouteTimelineList({ tracker }: RouteTimelineListProps) {
 
   if (!route) return null;
 
+  const firstTransit = route.stops.length > 0 ? getNearestTransit(route.stops[0]) : null;
+  const lastTransit = route.stops.length > 1 ? getNearestTransit(route.stops[route.stops.length - 1]) : null;
+
   return (
     <FlatList
       data={route.stops}
@@ -42,6 +49,14 @@ export function RouteTimelineList({ tracker }: RouteTimelineListProps) {
             totalMinutes={metrics.totalMinutes}
             km={metrics.km}
           />
+
+          {firstTransit && (
+            <TransitAnchorCard
+              type="start"
+              stationName={formatMetroName(firstTransit.stationName, lang)}
+              walkMinutes={firstTransit.walkMinutes}
+            />
+          )}
 
           {isActive && nextPuja ? (
             <NextStopCard
@@ -70,7 +85,8 @@ export function RouteTimelineList({ tracker }: RouteTimelineListProps) {
           ? `${puja.metro.name} · ${t('common.minWalk', { n: puja.metro.walkMin })}`
           : undefined;
 
-        return (
+
+         return (
           <StopTimelineItem
             index={index}
             isLast={index === route.stops.length - 1}
@@ -86,6 +102,15 @@ export function RouteTimelineList({ tracker }: RouteTimelineListProps) {
           />
         );
       }}
+      ListFooterComponent={
+        lastTransit ? (
+          <TransitAnchorCard
+            type="end"
+            stationName={formatMetroName(lastTransit.stationName, lang)}
+            walkMinutes={lastTransit.walkMinutes}
+          />
+        ) : undefined
+      }
     />
   );
 }

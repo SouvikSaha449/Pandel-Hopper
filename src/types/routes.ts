@@ -17,6 +17,7 @@ export type CompletedHop = {
   id: string;
   routeId: string;
   title: string;
+  stops?:string[];
   stopsCount: number;
   km: number;
   minutes: number;

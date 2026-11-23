@@ -20,6 +20,7 @@ type RoutesState = {
   saveCustomRoute: (name: string, stops: string[], existingId?: string) => string;
   deleteCustomRoute: (routeId: string) => void;
   clearHistory: () => void;
+  deleteHistoryEntry: (id: string) => void;
 };
 
 export const useRoutesStore = create<RoutesState>()(
@@ -76,6 +77,7 @@ export const useRoutesStore = create<RoutesState>()(
             id: `hop-${Date.now()}`,
             routeId: state.active.routeId,
             title,
+            stops,
             stopsCount: stops.length,
             km,
             minutes: totalMinutes,
@@ -119,6 +121,10 @@ export const useRoutesStore = create<RoutesState>()(
         })),
 
       clearHistory: () => set({ history: [] }),
+      deleteHistoryEntry: (id) =>
+        set((state) => ({
+          history: state.history.filter((h) => h.id !== id),
+        })),
     }),
     {
       name: 'pandal-hopper-routes',

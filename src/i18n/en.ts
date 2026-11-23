@@ -159,7 +159,7 @@ const en = {
     createdByYou: 'Created by you · {{count}} pujas',
     sharedByRiya: 'Shared by Riya · {{count}} pujas',
   },
-  history: {
+   history: {
     title: 'History',
     export: 'Export',
     pujasVisited: 'pujas visited',
@@ -169,6 +169,10 @@ const en = {
     summary: '{{count}} pujas · {{km}} km',
     emptyTitle: 'No completed walks yet',
     emptySubtitle: 'Complete a route to log your pandal hopping stats here.',
+    walkAgain: 'Walk again',
+    clearAll: 'Clear history',
+    clearConfirm: 'Clear all history?',
+    deleteConfirm: 'Delete this walk?',
   },
   search: {
     cancel: 'Clear',

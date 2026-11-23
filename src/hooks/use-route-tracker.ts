@@ -17,11 +17,11 @@ export function useRouteTracker(id?: string) {
   const [isEndHopOpen, setIsEndHopOpen] = useState(false);
 
   const customRoutes = useRoutesStore((s) => s.customRoutes);
+  const history = useRoutesStore((s) => s.history);
   const active = useRoutesStore((s) => s.active);
   const startRoute = useRoutesStore((s) => s.startRoute);
   const markVisited = useRoutesStore((s) => s.markVisited);
   const unmarkVisited = useRoutesStore((s) => s.unmarkVisited);
-  const clearActive = useRoutesStore((s) => s.clearActive);
   const completeActiveRoute = useRoutesStore((s) => s.completeActiveRoute);
 
   const route = resolveRouteById(id ?? '', customRoutes, lang);
@@ -32,7 +32,15 @@ export function useRouteTracker(id?: string) {
   );
 
   const isActive = active?.routeId === route?.id;
-  const visitedMap = active && isActive ? active.visitedAt : {};
+  const historical = history.find((h) => h.routeId === route?.id || h.id === route?.id);
+ 
+  const visitedMap =
+    active && isActive
+      ? active.visitedAt
+      : historical && historical.stops
+      ? Object.fromEntries(historical.stops.map((s) => [s, historical.finishedAt]))
+      : {};
+  
   const visitedCount = route
     ? route.stops.filter((stopId) => Boolean(visitedMap[stopId])).length
     : 0;

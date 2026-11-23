@@ -4,8 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRouteTracker } from '@/hooks/use-route-tracker';
-import { RouteDetailBottomBar } from '@/components/routes/RouteDetailBottamBar';
-import { RouteTimelineList } from '@/components/routes/RouteTimelineList';
+import { RouteDetailBottomBar, RouteTimelineList } from '@/components/routes';
 
 export default function RouteDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();

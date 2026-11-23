@@ -4,7 +4,7 @@ import { walkMinutes } from '@/data/geo';
 import { getPuja, pujaName } from '@/data/pujas';
 import { formatMetroName } from '@/data/metro';
 import { getNearestTransit } from '@/utils/route-transit';
-import { TransitAnchorCard } from './TransitAnchorCard';
+import { TransitAnchorCard } from '../shared/TransitAnchorCard';
 import type { useRouteTracker } from '@/hooks/use-route-tracker';
 import { NextStopCard } from './NextStopCard';
 import { RouteSummaryHeader } from './RouteSummaryHeader';

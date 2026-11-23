@@ -3,9 +3,11 @@ import { useMemo } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { RouteCompleteHero } from '@/components/routes/RouteCompleteHero';
-import { RouteCompleteStats } from '@/components/routes/RouteCompleteStats';
-import { RouteCompleteStops } from '@/components/routes/RouteCompleteStops';
+import {
+  RouteCompleteHero,
+  RouteCompleteStats,
+  RouteCompleteStops,
+} from '@/components/routes';
 import { useTheme } from '@/hooks/use-theme';
 import { useNumber, useTranslation } from '@/i18n';
 import { usePrefs } from '@/store/prefs';

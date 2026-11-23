@@ -3,10 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/hooks/use-theme';
-import { CustomRoutesTab } from '@/components/routes/CustomRoutesTab';
-import { HistoryTab } from '@/components/routes/HistoryTab';
-import { ReadyMadeTab } from '@/components/routes/ReadyMadeTab';
-import { RouteSegmentTabs, type RouteSegment } from '@/components/routes/RouteSegmentTabs';
+import {
+  CustomRoutesTab,
+  HistoryTab,
+  ReadyMadeTab,
+  RouteSegmentTabs,
+  type RouteSegment,
+} from '@/components/routes';
 
 export default function RoutesScreen() {
   const colors = useTheme();

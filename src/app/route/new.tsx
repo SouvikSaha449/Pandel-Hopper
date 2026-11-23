@@ -1,53 +1,23 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getPuja, pujaName } from '@/data/pujas';
-import { walkMinutes } from '@/data/geo';
-import { usePrefs } from '@/store/prefs';
 import { useRouteEditor } from '@/hooks/use-route-editor';
-import { AddPujaSheet } from '@/components/routes/AddPujaSheet';
-import { RouteEditorBottomBar } from '@/components/routes/RouteEditorBottomBar';
-import { StopConnector } from '@/components/routes/StopConnector';
-import { StopOrderItem } from '@/components/routes/StopOrderItem';
-import { TransitAnchorCard } from '@/components/routes/TransitAnchorCard';
 import { HeaderActionButton } from '@/components/ui/HeaderActionButton';
-import { StopActionDialog } from '@/components/routes/StopActionDialog';
+import {
+  AddPujaSheet,
+  RouteEditableStopList,
+  RouteEditorBottomBar,
+  RouteNameInput,
+  StopActionDialog,
+} from '@/components/routes';;
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { formatMetroName } from '@/data/metro';
 
 export default function RouteNewScreen() {
   const editor = useRouteEditor();
-  const lang = usePrefs((s) => s.lang);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeStop, setActiveStop] = useState<{ index: number; name: string } | null>(null);
-
-  const handleStopPress = (index: number, stopName: string) => {
-    Alert.alert(
-      stopName,
-      'Choose an action for this stop:',
-      [
-        {
-          text: 'Set as Starting Point',
-          onPress: () => editor.setAsStart(index),
-        },
-        {
-          text: 'Set as Ending Point',
-          onPress: () => editor.setAsEnd(index),
-        },
-        {
-          text: 'Remove Stop',
-          style: 'destructive',
-          onPress: () => editor.removeStop(index),
-        },
-        {
-          text: editor.t('common.cancel'),
-          style: 'cancel',
-        },
-      ]
-    );
-  };
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={[styles.container, { backgroundColor: editor.colors.bg }]}>
@@ -69,87 +39,13 @@ export default function RouteNewScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <RouteNameInput value={editor.name} onChangeText={editor.setName} />
 
-        <View
-          style={[
-            styles.nameCard,
-            { backgroundColor: editor.colors.card, borderColor: editor.colors.cardBorder },
-          ]}
-        >
-          <TextInput
-            value={editor.name}
-            onChangeText={editor.setName}
-            placeholder={editor.t('routes.newRoute')}
-            placeholderTextColor={editor.colors.textMuted}
-            style={[styles.nameInput, { color: editor.colors.text }]}
-          />
-          <Text style={[styles.nameLabel, { color: editor.colors.textMuted }]}>
-            {editor.t('routes.name')}
-          </Text>
-        </View>
-
-        {editor.firstTransit && (
-          <TransitAnchorCard
-            type="start"
-            stationName={formatMetroName(editor.firstTransit.stationName, lang)}
-            walkMinutes={editor.firstTransit.walkMinutes}
-          />
-        )}
-
-        <View style={styles.stopsList}>
-          {editor.stops.map((stopId, index) => {
-            const puja = getPuja(stopId);
-            if (!puja) return null;
-
-            const prevPuja = index > 0 ? getPuja(editor.stops[index - 1]) : null;
-            const walkMin = prevPuja ? walkMinutes(prevPuja.loc, puja.loc) : 0;
-
-            return (
-              <View key={stopId}>
-                {index > 0 && walkMin > 0 ? (
-                  <StopConnector walkMinutes={walkMin} />
-                ) : null}
-
-                <StopOrderItem
-                  index={index}
-                  isFirst={index === 0}
-                  isLast={index === editor.stops.length - 1}
-                  onPress={() => setActiveStop({ index, name: pujaName(puja, lang) })}
-                  pujaName={pujaName(puja, lang)}
-                  onMoveUp={() => editor.moveUp(index)}
-                  onMoveDown={() => editor.moveDown(index)}
-                  onRemove={() => editor.removeStop(index)}
-                />
-              </View>
-            );
-          })}
-        </View>
-
-        {editor.lastTransit && (
-          <TransitAnchorCard
-            type="end"
-            stationName={formatMetroName(editor.lastTransit.stationName, lang)}
-            walkMinutes={editor.lastTransit.walkMinutes}
-          />
-        )}
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => setIsSheetOpen(true)}
-          style={({ pressed }) => [
-            styles.addPujaBtn,
-            {
-              borderColor: editor.colors.accent,
-              backgroundColor: editor.colors.card,
-              opacity: pressed ? 0.8 : 1,
-            },
-          ]}
-        >
-          <Ionicons name="add" size={20} color={editor.colors.accent} />
-          <Text style={[styles.addPujaBtnText, { color: editor.colors.accent }]}>
-            {editor.t('routes.addPuja')}
-          </Text>
-        </Pressable>
+        <RouteEditableStopList
+          editor={editor}
+          onStopPress={(index, name) => setActiveStop({ index, name })}
+          onOpenAddSheet={() => setIsSheetOpen(true)}
+        />
 
         <AddPujaSheet
           visible={isSheetOpen}
@@ -167,6 +63,7 @@ export default function RouteNewScreen() {
         onOptimize={editor.optimize}
         onStartRoute={() => editor.save('active')}
       />
+
       <StopActionDialog
         visible={activeStop !== null}
         stopName={activeStop?.name ?? ''}
@@ -214,42 +111,5 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingBottom: 32,
-  },
-  nameCard: {
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 10,
-  },
-  nameInput: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  nameLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginLeft: 12,
-  },
-  stopsList: {
-    marginVertical: 4,
-  },
-  addPujaBtn: {
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    marginTop: 12,
-  },
-  addPujaBtnText: {
-    fontSize: 15,
-    fontWeight: '700',
   },
 });

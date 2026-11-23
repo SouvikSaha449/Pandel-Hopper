@@ -51,7 +51,10 @@ export function useRouteTracker(id?: string) {
   const nextPuja = nextStopId ? getPuja(nextStopId) : null;
 
   const handleStart = () => {
-    if (route) startRoute(route.id);
+    if (route) {
+      startRoute(route.id);
+      router.navigate('/(tabs)');
+    }
   };
 
   const handleArrive = (pujaId: string) => {

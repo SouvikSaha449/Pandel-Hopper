@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n';
@@ -13,15 +12,18 @@ import {
 import { getNearestTransit } from '@/utils/route-transit';
 
 export function useRouteEditor() {
-  const { from, edit, add } = useLocalSearchParams<{
+
+  const { from, edit, add, fav } = useLocalSearchParams<{
     from?: string;
     edit?: string;
     add?: string;
+    fav?: string;
   }>();
 
   const colors = useTheme();
   const { t } = useTranslation();
   const lang = usePrefs((s) => s.lang);
+  const favourites = usePrefs((s) => s.favourites);
   const customRoutes = useRoutesStore((s) => s.customRoutes);
   const saveCustomRoute = useRoutesStore((s) => s.saveCustomRoute);
   const startRoute = useRoutesStore((s) => s.startRoute);
@@ -32,8 +34,15 @@ export function useRouteEditor() {
     return resolveRouteById(targetId, customRoutes, lang);
   }, [edit, from, customRoutes, lang]);
 
-  const [name, setName] = useState(() => sourceRoute?.title ?? '');
+  const [name, setName] = useState(() => {
+    if (fav === '1') return t('saved.defaultSavedRouteName');
+    return sourceRoute?.title ?? '';
+  });
+
   const [stops, setStops] = useState<string[]>(() => {
+    if (fav === '1') {
+      return [...favourites];
+    }
     const base = sourceRoute ? [...sourceRoute.stops] : [];
     if (add && !base.includes(add)) {
       return [...base, add];
@@ -43,6 +52,7 @@ export function useRouteEditor() {
 
   const [lockStart, setLockStart] = useState(false);
   const [lockEnd, setLockEnd] = useState(false);
+
   const [optimizeResult, setOptimizeResult] = useState<{
     title: string;
     message: string;
@@ -58,7 +68,7 @@ export function useRouteEditor() {
     if (isSameOrder) {
       setOptimizeResult({
         title: t('routes.optimize'),
-        message: 'Your route is already arranged in the shortest possible walking order!',
+        message: t('routes.optimizeAlreadyShortest'),
       });
       return;
     }
@@ -72,11 +82,11 @@ export function useRouteEditor() {
       title: t('routes.optimize'),
       message:
         savedKm > 0
-          ? `Reordered stops for shortest walk! Saved ~${savedKm} km of walking.`
-          : 'Reordered stops for the shortest walking path!',
+          ? t('routes.optimizeSavedKm', { km: savedKm })
+          : t('routes.optimizeShortestPath'),
       previousStops,
     });
-  };
+  }; 
 
   const undoOptimize = () => {
     if (optimizeResult?.previousStops) {
@@ -176,7 +186,7 @@ export function useRouteEditor() {
     setAsEnd,
     removeStop,
     addStop,
-     optimize,
+    optimize,
     optimizeResult,
     undoOptimize,
     dismissOptimizeResult,

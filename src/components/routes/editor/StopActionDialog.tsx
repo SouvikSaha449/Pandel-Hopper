@@ -48,8 +48,8 @@ export function StopActionDialog({
           <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
             {stopName}
           </Text>
-          <Text style={[styles.message, { color: colors.textMuted }]}>
-            Stop #{formatNumber(stopIndex + 1)} · Choose Route Anchor
+<Text style={[styles.message, { color: colors.textMuted }]}>
+            {t('routes.chooseAnchor', { n: formatNumber(stopIndex + 1) })}
           </Text>
 
           <View style={styles.buttonStack}>
@@ -67,9 +67,9 @@ export function StopActionDialog({
                 ]}
               >
                 <Ionicons name="flag" size={17} color="#4ADE80" />
-                <Text style={[styles.btnText, { color: '#4ADE80' }]}>
-                  Set as Starting Point
-                </Text>
+               <Text style={[styles.btnText, { color: colors.accent }]}>
+            {t('routes.setAsEnd')}
+          </Text>
               </Pressable>
             )}
 

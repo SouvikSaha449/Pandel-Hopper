@@ -32,7 +32,7 @@ export default function RouteNewScreen() {
         </Text>
 
         <HeaderActionButton
-          label="Save"
+          label={editor.t('common.save')}
           onPress={() => editor.save('draft')}
           disabled={editor.stops.length === 0}
         />

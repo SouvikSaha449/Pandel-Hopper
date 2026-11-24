@@ -31,6 +31,7 @@ export * from './editor/RouteEditorPills';
 export * from './complete/RouteCompleteHero';
 export * from './complete/RouteCompleteStats';
 export * from './complete/RouteCompleteStops';
+export * from './complete/RouteCompleteCircuitCard';
 
 // 📁 shared
 export * from './shared/TransitAnchorCard';

@@ -19,10 +19,15 @@ export function RouteCompleteStats({
   const formatNumber = useNumber();
 
   return (
-    <View style={styles.statsRow}>
+    <View
+      style={[
+        styles.statsCard,
+        { backgroundColor: colors.card, borderColor: colors.cardBorder },
+      ]}
+    >
 
-      <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
-        <Ionicons name="location-sharp" size={18} color="#FF7043" />
+      <View style={styles.statCol}>
+        <Ionicons name="location-sharp" size={18} color={colors.accent} />
         <Text style={[styles.statValue, { color: colors.text }]}>
           {formatNumber(stopsCount)}
         </Text>
@@ -31,7 +36,9 @@ export function RouteCompleteStats({
         </Text>
       </View>
 
-      <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+      <View style={[styles.statDivider, { backgroundColor: colors.cardBorder }]} />
+
+      <View style={styles.statCol}>
         <Ionicons name="walk" size={18} color="#4ADE80" />
         <Text style={[styles.statValue, { color: colors.text }]}>
           {formatNumber(km.toFixed(1))} km
@@ -41,8 +48,10 @@ export function RouteCompleteStats({
         </Text>
       </View>
 
-      <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
-        <Ionicons name="time" size={18} color="#60A5FA" />
+      <View style={[styles.statDivider, { backgroundColor: colors.cardBorder }]} />
+
+      <View style={styles.statCol}>
+        <Ionicons name="time-outline" size={18} color="#60A5FA" />
         <Text style={[styles.statValue, { color: colors.text }]} numberOfLines={1}>
           {durationText}
         </Text>
@@ -55,23 +64,28 @@ export function RouteCompleteStats({
 }
 
 const styles = StyleSheet.create({
-  statsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginHorizontal: 16,
-    marginVertical: 14,
-  },
-  statCard: {
-    flex: 1,
-    borderRadius: 18,
+  statsCard: {
+    borderRadius: 20,
     borderWidth: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 8,
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+    marginHorizontal: 16,
+    marginVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  statCol: {
+    flex: 1,
     alignItems: 'center',
     gap: 4,
   },
+  statDivider: {
+    width: 1,
+    height: 36,
+  },
   statValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '800',
     marginTop: 2,
   },
@@ -79,5 +93,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

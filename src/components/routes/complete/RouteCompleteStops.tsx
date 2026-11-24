@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getPuja, pujaName } from '@/data/pujas';
 import { useTheme } from '@/hooks/use-theme';
@@ -14,11 +15,17 @@ export function RouteCompleteStops({ stops }: RouteCompleteStopsProps) {
   const { t } = useTranslation();
   const formatNumber = useNumber();
   const lang = usePrefs((s) => s.lang);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const previewStops = stops.slice(0, 3);
+  if (stops.length === 0) return null;
+
+  const visibleStops = isExpanded ? stops : stops.slice(0, 3);
   const remainingCount = Math.max(0, stops.length - 3);
 
-  if (previewStops.length === 0) return null;
+  const toggleExpand = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsExpanded((prev) => !prev);
+  };
 
   return (
     <View style={[styles.stopsCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
@@ -27,7 +34,7 @@ export function RouteCompleteStops({ stops }: RouteCompleteStopsProps) {
       </Text>
 
       <View style={styles.stopsList}>
-        {previewStops.map((stopId) => {
+        {visibleStops.map((stopId) => {
           const puja = getPuja(stopId);
           if (!puja) return null;
           return (
@@ -41,12 +48,26 @@ export function RouteCompleteStops({ stops }: RouteCompleteStopsProps) {
         })}
       </View>
 
-      {remainingCount > 0 && (
-        <View style={styles.moreChip}>
-          <Text style={[styles.moreText, { color: colors.textMuted }]}>
-            {t('complete.more', { n: formatNumber(remainingCount) })}
+      {stops.length > 3 && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={toggleExpand}
+          style={({ pressed }) => [
+            styles.moreChip,
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Text style={[styles.moreText, { color: colors.accent }]}>
+            {isExpanded
+              ? 'Show less'
+              : t('complete.more', { n: formatNumber(remainingCount) })}
           </Text>
-        </View>
+          <Ionicons
+            name={isExpanded ? 'chevron-up' : 'chevron-down'}
+            size={14}
+            color={colors.accent}
+          />
+        </Pressable>
       )}
     </View>
   );
@@ -81,14 +102,17 @@ const styles = StyleSheet.create({
   },
   moreChip: {
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
+    gap: 4,
     marginTop: 2,
   },
   moreText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

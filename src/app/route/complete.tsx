@@ -7,6 +7,7 @@ import {
   RouteCompleteHero,
   RouteCompleteStats,
   RouteCompleteStops,
+  RouteCompleteCircuitCard,
 } from '@/components/routes';
 import { useTheme } from '@/hooks/use-theme';
 import { useNumber, useTranslation } from '@/i18n';
@@ -50,7 +51,7 @@ export default function RouteCompleteScreen() {
   };
 
   const handleDismiss = () => {
-    router.dismissAll();
+    router.replace('/(tabs)');
   };
 
   return (
@@ -73,13 +74,13 @@ export default function RouteCompleteScreen() {
           title={t('complete.title')}
           routeTitle={latestHop?.title ?? 'Durga Puja Hop'}
         />
-
-        {/* 3. Stat Cards */}
         <RouteCompleteStats
           stopsCount={latestHop?.stopsCount ?? stops.length}
           km={latestHop?.km ?? 0}
           durationText={formattedDuration}
         />
+
+        <RouteCompleteCircuitCard stops={stops} km={latestHop?.km ?? 0} />
 
         <RouteCompleteStops stops={stops} />
       </ScrollView>
